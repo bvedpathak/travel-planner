@@ -1,0 +1,208 @@
+{
+  "city": "San Francisco",
+  "state": "California",
+  "country": "USA",
+  "description": "San Francisco is a cultural and commercial hub known for its steep hills, iconic landmarks like the Golden Gate Bridge, diverse neighborhoods, and innovative tech scene.",
+  "bestTimeToVisit": "September-November (warmest weather) or April-May",
+  "timezone": "America/Los_Angeles",
+  "currency": "USD",
+  "language": "English",
+  "climate": {
+    "type": "Mediterranean",
+    "summer": "Cool and foggy (60-70°F)",
+    "winter": "Mild and wet (50-60°F)",
+    "rainfall": "Most rain November-March",
+    "note": "Microclimates vary greatly across the city"
+  },
+  "highlights": [
+    "Iconic Golden Gate Bridge",
+    "Historic cable cars",
+    "Alcatraz Island prison tour",
+    "Diverse neighborhoods and cultures",
+    "World-class dining scene",
+    "Tech innovation hub"
+  ],
+  "topAttractions": [
+    {
+      "name": "Golden Gate Bridge",
+      "description": "World-famous 1.7-mile suspension bridge connecting SF to Marin County",
+      "type": "Landmark/Architecture",
+      "cost": "Free to walk/bike, $8.60 to drive",
+      "duration": "2-3 hours",
+      "bestViews": ["Crissy Field", "Marin Headlands", "Baker Beach"]
+    },
+    {
+      "name": "Alcatraz Island",
+      "description": "Former federal prison on island in San Francisco Bay",
+      "type": "History/Museum",
+      "cost": "$45+ (advance booking required)",
+      "duration": "Half day",
+      "includes": "Ferry transport and audio tour"
+    },
+    {
+      "name": "Fisherman's Wharf & Pier 39",
+      "description": "Tourist waterfront area with shops, restaurants, and sea lions",
+      "type": "Entertainment/Shopping",
+      "cost": "Free to walk around",
+      "duration": "3-4 hours",
+      "highlights": ["Sea lions", "Street performers", "Aquarium of the Bay"]
+    },
+    {
+      "name": "Lombard Street",
+      "description": "The 'crookedest street in the world' with eight hairpin turns",
+      "type": "Landmark/Photography",
+      "cost": "Free",
+      "duration": "30 minutes",
+      "location": "Between Hyde and Leavenworth Streets"
+    }
+  ],
+  "neighborhoods": [
+    {
+      "name": "Chinatown",
+      "description": "Largest Chinatown outside of Asia with authentic shops and restaurants",
+      "highlights": ["Grant Avenue", "Portsmouth Square", "Dragon Gate"]
+    },
+    {
+      "name": "Mission District",
+      "description": "Vibrant Latino neighborhood famous for murals and burritos",
+      "highlights": ["Mission Dolores", "24th Street murals", "Valencia Street"]
+    },
+    {
+      "name": "North Beach",
+      "description": "Italian neighborhood known as 'Little Italy'",
+      "highlights": ["Washington Square Park", "Saints Peter and Paul Church"]
+    },
+    {
+      "name": "Castro District",
+      "description": "Historic LGBTQ+ neighborhood with rainbow crosswalks",
+      "highlights": ["Castro Theatre", "Harvey Milk Plaza"]
+    },
+    {
+      "name": "Haight-Ashbury",
+      "description": "Famous 1960s hippie neighborhood",
+      "highlights": ["Vintage shops", "Victorian houses", "Golden Gate Park"]
+    }
+  ],
+  "foodScene": {
+    "specialties": ["Sourdough bread", "Dungeness crab", "Mission burritos", "Wine", "Farm-to-table cuisine"],
+    "mustTry": [
+      {
+        "name": "Swan Oyster Depot",
+        "type": "Seafood",
+        "specialty": "Fresh oysters and Dungeness crab",
+        "note": "Counter seating only, no reservations",
+        "price": "$$$"
+      },
+      {
+        "name": "Tartine Bakery",
+        "type": "Bakery",
+        "specialty": "Country bread and pastries",
+        "note": "Expect lines, especially weekends",
+        "price": "$$"
+      },
+      {
+        "name": "La Taquería",
+        "type": "Mexican",
+        "specialty": "Mission-style burritos",
+        "note": "James Beard Award winner",
+        "price": "$"
+      }
+    ],
+    "michelinStars": "More Michelin-starred restaurants per capita than anywhere except Tokyo",
+    "foodTrucks": "Off the Grid events throughout the city"
+  },
+  "transportation": {
+    "airport": "San Francisco International (SFO) - 13 miles south",
+    "publicTransit": "Muni buses, light rail, and cable cars",
+    "cableCars": "Historic transit and tourist attraction - $8 per ride",
+    "bart": "BART connects to East Bay and Peninsula",
+    "rideshare": "Uber and Lyft widely available",
+    "walkability": "Very walkable but hilly",
+    "biking": "Bay Wheels bike share, many bike lanes",
+    "parking": "Extremely limited and expensive ($3-8/hour)"
+  },
+  "shopping": [
+    {
+      "name": "Union Square",
+      "type": "Department stores and luxury brands",
+      "highlights": ["Macy's", "Nordstrom", "Tiffany & Co."]
+    },
+    {
+      "name": "Fillmore Street",
+      "type": "Boutique shopping",
+      "highlights": ["Local designers", "Vintage shops"]
+    },
+    {
+      "name": "Valencia Street (Mission)",
+      "type": "Eclectic shops and bookstores",
+      "highlights": ["Women & Children First", "Pirate Supply Store"]
+    }
+  ],
+  "outdoorActivities": [
+    "Golden Gate Park (larger than Central Park)",
+    "Crissy Field waterfront walking",
+    "Lands End coastal trail",
+    "Baker Beach",
+    "Presidio hiking trails",
+    "Ocean Beach"
+  ],
+  "museums": [
+    {
+      "name": "San Francisco Museum of Modern Art (SFMOMA)",
+      "type": "Modern and contemporary art",
+      "cost": "$30"
+    },
+    {
+      "name": "California Academy of Sciences",
+      "type": "Natural history with planetarium and aquarium",
+      "cost": "$40"
+    },
+    {
+      "name": "Exploratorium",
+      "type": "Interactive science museum",
+      "cost": "$30"
+    }
+  ],
+  "dayTrips": [
+    {
+      "destination": "Napa Valley",
+      "distance": "1-1.5 hours drive",
+      "activity": "Wine tasting",
+      "note": "Book tours in advance"
+    },
+    {
+      "destination": "Muir Woods",
+      "distance": "30 minutes drive",
+      "activity": "Redwood forest hiking",
+      "note": "Parking reservations required"
+    },
+    {
+      "destination": "Monterey/Carmel",
+      "distance": "2 hours drive",
+      "activity": "Coastal scenery and aquarium",
+      "note": "Full day trip recommended"
+    }
+  ],
+  "tips": [
+    "Dress in layers - weather changes quickly",
+    "Summer is actually the coldest season",
+    "Public transportation is extensive but can be slow",
+    "Steep hills everywhere - wear comfortable shoes",
+    "Fog often rolls in during afternoons",
+    "Restaurant reservations highly recommended",
+    "Tipping 20% is standard",
+    "Sales tax is 8.625%",
+    "Homeless population is visible - be aware but compassionate"
+  ],
+  "budgetGuideline": {
+    "budget": "$80-120/day",
+    "midRange": "$120-200/day",
+    "luxury": "$200+/day",
+    "note": "One of the most expensive cities in the US - budget accordingly"
+  },
+  "safety": {
+    "general": "Generally safe in tourist areas during the day",
+    "avoid": "Tenderloin, parts of SOMA, and isolated areas at night",
+    "tips": ["Stay aware of surroundings", "Don't leave items visible in cars", "Use well-lit streets at night"]
+  }
+}

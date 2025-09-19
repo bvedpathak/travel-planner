@@ -1,0 +1,174 @@
+{
+  "city": "Austin",
+  "state": "Texas",
+  "country": "USA",
+  "description": "Austin is the vibrant capital of Texas, known for its live music scene, fantastic food, and the slogan 'Keep Austin Weird'. The city perfectly blends urban sophistication with Texas charm.",
+  "bestTimeToVisit": "March-May and September-November",
+  "timezone": "America/Chicago",
+  "currency": "USD",
+  "language": "English",
+  "climate": {
+    "type": "Humid subtropical",
+    "summer": "Hot and humid (80-100°F)",
+    "winter": "Mild (40-70°F)",
+    "rainfall": "Moderate, heaviest in spring and fall"
+  },
+  "highlights": [
+    "Live music capital of the world",
+    "South by Southwest (SXSW) festival",
+    "Incredible BBQ and food truck scene",
+    "Lady Bird Lake outdoor activities",
+    "Vibrant nightlife on 6th Street"
+  ],
+  "topAttractions": [
+    {
+      "name": "Texas State Capitol",
+      "description": "Free tours of the beautiful state capitol building with grounds larger than the US Capitol",
+      "type": "Government/History",
+      "cost": "Free",
+      "duration": "2-3 hours",
+      "address": "1100 Congress Ave, Austin, TX 78701"
+    },
+    {
+      "name": "Lady Bird Lake",
+      "description": "Urban lake perfect for kayaking, paddleboarding, and hiking/biking trails",
+      "type": "Nature/Recreation",
+      "cost": "Free (equipment rental extra)",
+      "duration": "Half day",
+      "activities": ["Kayaking", "Paddleboarding", "Hiking", "Biking"]
+    },
+    {
+      "name": "South Congress Bridge Bats",
+      "description": "World's largest urban bat colony - over 1.5 million bats emerge at sunset",
+      "type": "Nature/Wildlife",
+      "cost": "Free",
+      "duration": "1-2 hours",
+      "bestTime": "March-October at sunset"
+    },
+    {
+      "name": "Zilker Park",
+      "description": "78-acre park hosting festivals and offering recreational activities",
+      "type": "Park/Recreation",
+      "cost": "Free",
+      "duration": "Half day",
+      "events": ["Austin City Limits", "Zilker Park Kite Festival"]
+    }
+  ],
+  "foodScene": {
+    "specialties": ["BBQ", "Tacos", "Food Trucks", "Breakfast Tacos"],
+    "mustTry": [
+      {
+        "name": "Franklin Barbecue",
+        "type": "BBQ",
+        "specialty": "Brisket",
+        "note": "Expect 2-4 hour wait times",
+        "price": "$$"
+      },
+      {
+        "name": "Torchy's Tacos",
+        "type": "Tacos",
+        "specialty": "Trailer Park Taco",
+        "note": "Local Austin chain",
+        "price": "$"
+      },
+      {
+        "name": "Uchi",
+        "type": "Japanese",
+        "specialty": "Sushi",
+        "note": "Upscale dining, reservations required",
+        "price": "$$$"
+      }
+    ],
+    "foodTrucks": "Over 1,000 food trucks throughout the city - try East Austin food truck parks",
+    "breakfastTacos": "Austin institution - available everywhere, especially gas stations"
+  },
+  "music": {
+    "venues": [
+      "The Continental Club",
+      "Antone's",
+      "Stubbs Bar-B-Q",
+      "The Mohawk",
+      "Red River District"
+    ],
+    "festivals": [
+      "South by Southwest (SXSW) - March",
+      "Austin City Limits - October",
+      "Fun Fun Fun Fest - November"
+    ],
+    "liveMusic": "Over 250 venues with live music - many with no cover charge"
+  },
+  "neighborhoods": [
+    {
+      "name": "Downtown",
+      "description": "Business district with nightlife on 6th Street and Red River",
+      "highlights": ["State Capitol", "6th Street", "Convention Center"]
+    },
+    {
+      "name": "South Congress (SoCo)",
+      "description": "Trendy area with shopping, dining, and 'Keep Austin Weird' culture",
+      "highlights": ["South Congress Bridge", "Boutique shopping", "Food trucks"]
+    },
+    {
+      "name": "East Austin",
+      "description": "Hip, artistic neighborhood with galleries, music venues, and food",
+      "highlights": ["Food truck parks", "Live music venues", "Art galleries"]
+    },
+    {
+      "name": "The Domain",
+      "description": "Upscale shopping and business district",
+      "highlights": ["High-end shopping", "Fine dining", "Tech companies"]
+    }
+  ],
+  "transportation": {
+    "airport": "Austin-Bergstrom International (AUS) - 8 miles southeast",
+    "publicTransit": "Capital Metro bus system and MetroRail",
+    "rideshare": "Uber and Lyft widely available",
+    "biking": "B-cycle bike share program and many bike lanes",
+    "walkability": "Downtown and some neighborhoods are walkable",
+    "parking": "Can be challenging downtown - consider public transit or rideshare"
+  },
+  "shopping": [
+    {
+      "name": "South Congress Avenue",
+      "type": "Local boutiques and vintage shops",
+      "highlights": ["Uncommon Objects", "Lucy in Disguise"]
+    },
+    {
+      "name": "The Domain",
+      "type": "Upscale outdoor mall",
+      "highlights": ["Nordstrom", "Apple Store", "Luxury brands"]
+    },
+    {
+      "name": "2nd Street District",
+      "type": "Boutique shopping",
+      "highlights": ["Local designers", "Whole Foods flagship"]
+    }
+  ],
+  "outdoorActivities": [
+    "Barton Springs Pool (natural spring-fed pool)",
+    "Mount Bonnell (highest point in Austin)",
+    "Austin Greenbelt hiking",
+    "Lake Austin water activities",
+    "Zilker Botanical Garden"
+  ],
+  "nightlife": {
+    "areas": ["6th Street", "Red River District", "Rainey Street", "East 6th"],
+    "types": ["Live music venues", "Rooftop bars", "Dance clubs", "Dive bars"],
+    "note": "Many venues allow 18+ with wristbands for alcohol"
+  },
+  "tips": [
+    "Traffic can be heavy - plan extra time",
+    "Many restaurants don't take reservations - expect waits",
+    "Summer temperatures exceed 100°F regularly",
+    "Always have cash for food trucks",
+    "Live music happens every night of the week",
+    "Breakfast tacos are serious business here",
+    "SXSW and ACL make the city very crowded - book early"
+  ],
+  "budgetGuideline": {
+    "budget": "$50-80/day",
+    "midRange": "$80-150/day",
+    "luxury": "$150+/day",
+    "note": "Food truck meals $8-15, restaurant meals $15-40, drinks $8-15"
+  }
+}

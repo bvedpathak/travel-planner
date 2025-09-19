@@ -1,0 +1,20 @@
+# Model Context Protocol dependencies
+mcp
+
+# Core dependencies
+pydantic
+#asyncio-compat
+asyncio
+
+# Optional: For enhanced functionality
+requests
+python-dateutil
+
+# Development dependencies (optional)
+pytest
+pytest-asyncio
+pytest-cov
+
+# Type checking (optional)
+mypy
+types-requests

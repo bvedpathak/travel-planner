@@ -1,0 +1,249 @@
+{
+  "city": "New York City",
+  "state": "New York",
+  "country": "USA",
+  "description": "The Big Apple - America's largest city and global center for finance, arts, fashion, and culture. NYC is made up of five boroughs with endless attractions, world-class dining, and 24/7 energy.",
+  "bestTimeToVisit": "April-June and September-November (mild weather, fewer crowds)",
+  "timezone": "America/New_York",
+  "currency": "USD",
+  "language": "English (but over 200 languages spoken)",
+  "climate": {
+    "type": "Humid continental",
+    "summer": "Hot and humid (70-85°F)",
+    "winter": "Cold (30-50°F), occasional snow",
+    "spring": "Mild and pleasant (50-70°F)",
+    "fall": "Cool and comfortable (50-70°F)"
+  },
+  "boroughs": [
+    {
+      "name": "Manhattan",
+      "description": "The heart of NYC with most major attractions",
+      "highlights": ["Times Square", "Central Park", "Broadway", "Wall Street"]
+    },
+    {
+      "name": "Brooklyn",
+      "description": "Hip borough with great food and Brooklyn Bridge views",
+      "highlights": ["DUMBO", "Williamsburg", "Brooklyn Bridge Park", "Coney Island"]
+    },
+    {
+      "name": "Queens",
+      "description": "Most diverse borough with authentic ethnic food",
+      "highlights": ["Flushing Meadows", "Astoria", "Long Island City"]
+    },
+    {
+      "name": "The Bronx",
+      "description": "Home of Yankees Stadium and the Bronx Zoo",
+      "highlights": ["Yankee Stadium", "Bronx Zoo", "New York Botanical Garden"]
+    },
+    {
+      "name": "Staten Island",
+      "description": "Quieter borough accessible by free ferry",
+      "highlights": ["Staten Island Ferry", "Snug Harbor", "Historic Richmond Town"]
+    }
+  ],
+  "topAttractions": [
+    {
+      "name": "Statue of Liberty & Ellis Island",
+      "description": "Iconic symbol of freedom and immigration museum",
+      "type": "Historic Landmark",
+      "cost": "$25+ (ferry and pedestal access)",
+      "duration": "Half day",
+      "note": "Crown access requires advance reservation"
+    },
+    {
+      "name": "Central Park",
+      "description": "843-acre green oasis in Manhattan",
+      "type": "Park/Nature",
+      "cost": "Free",
+      "duration": "Half to full day",
+      "highlights": ["Bethesda Fountain", "Strawberry Fields", "Central Park Zoo"]
+    },
+    {
+      "name": "Times Square",
+      "description": "Neon-lit crossroads of the world",
+      "type": "Entertainment District",
+      "cost": "Free to walk around",
+      "duration": "1-2 hours",
+      "note": "Very crowded, especially evenings and weekends"
+    },
+    {
+      "name": "Brooklyn Bridge",
+      "description": "Historic suspension bridge with pedestrian walkway",
+      "type": "Historic Landmark",
+      "cost": "Free",
+      "duration": "1-2 hours to walk",
+      "bestTime": "Early morning or sunset"
+    },
+    {
+      "name": "High Line",
+      "description": "Elevated park built on former railway line",
+      "type": "Park/Urban Planning",
+      "cost": "Free",
+      "duration": "2-3 hours",
+      "length": "1.45 miles from Meatpacking to Hudson Yards"
+    }
+  ],
+  "museums": [
+    {
+      "name": "Metropolitan Museum of Art",
+      "type": "Art Museum",
+      "cost": "$30 (suggested donation for NY residents)",
+      "highlights": ["Egyptian Art", "Arms & Armor", "Rooftop Garden"]
+    },
+    {
+      "name": "Museum of Modern Art (MoMA)",
+      "type": "Modern Art",
+      "cost": "$25",
+      "highlights": ["Van Gogh's Starry Night", "Picasso", "Contemporary art"]
+    },
+    {
+      "name": "9/11 Memorial & Museum",
+      "type": "Memorial/History",
+      "cost": "$26 (memorial is free)",
+      "duration": "2-3 hours",
+      "note": "Advance tickets recommended"
+    },
+    {
+      "name": "American Museum of Natural History",
+      "type": "Natural History",
+      "cost": "$28",
+      "highlights": ["Dinosaur fossils", "Planetarium", "Blue Whale"]
+    }
+  ],
+  "broadway": {
+    "description": "World-famous theater district with 41 professional theaters",
+    "ticketPrices": "$50-300+ depending on show and seat",
+    "tips": [
+      "Book popular shows months in advance",
+      "Same-day lottery tickets available for some shows",
+      "TKTS booth in Times Square offers discounted tickets",
+      "Wednesday matinee and Sunday shows often cheaper"
+    ],
+    "longRunning": ["The Lion King", "Chicago", "The Phantom of the Opera"]
+  },
+  "foodScene": {
+    "specialties": ["Pizza", "Bagels", "Deli sandwiches", "Hot dogs", "Cheesecake"],
+    "neighborhoods": [
+      "Little Italy - Italian cuisine",
+      "Chinatown - Authentic Chinese food",
+      "Koreatown - Korean BBQ and karaoke",
+      "East Village - Trendy restaurants",
+      "Williamsburg - Hipster food scene"
+    ],
+    "mustTry": [
+      {
+        "name": "Katz's Delicatessen",
+        "type": "Jewish Deli",
+        "specialty": "Pastrami sandwich",
+        "location": "Lower East Side",
+        "price": "$$"
+      },
+      {
+        "name": "Joe's Pizza",
+        "type": "Pizza",
+        "specialty": "Classic NY slice",
+        "locations": "Multiple locations",
+        "price": "$"
+      },
+      {
+        "name": "Peter Luger Steak House",
+        "type": "Steakhouse",
+        "specialty": "Porterhouse steak",
+        "location": "Brooklyn",
+        "price": "$$$$"
+      }
+    ],
+    "foodTrucks": "Halal Guys, street hot dogs, and various ethnic cuisines"
+  },
+  "transportation": {
+    "airports": [
+      "JFK - International flights, 45 minutes to Manhattan",
+      "LaGuardia - Domestic flights, 30 minutes to Manhattan",
+      "Newark - International/domestic, 45 minutes to Manhattan"
+    ],
+    "subway": {
+      "cost": "$2.90 per ride",
+      "system": "24/7 service, 472 stations",
+      "tips": ["Get MetroCard or OMNY", "Express vs local trains", "Stand right on escalators"]
+    },
+    "taxi": "Yellow cabs are iconic but Uber/Lyft also common",
+    "walking": "Many attractions within walking distance",
+    "biking": "Citi Bike share system throughout the city",
+    "driving": "Not recommended - traffic and parking are terrible"
+  },
+  "shopping": [
+    {
+      "name": "Fifth Avenue",
+      "type": "Luxury shopping",
+      "highlights": ["Tiffany & Co.", "Bergdorf Goodman", "Apple Store"]
+    },
+    {
+      "name": "SoHo",
+      "type": "Designer boutiques and art galleries",
+      "highlights": ["Cast iron architecture", "Independent designers"]
+    },
+    {
+      "name": "Brooklyn Flea Markets",
+      "type": "Vintage and antiques",
+      "locations": ["DUMBO", "Fort Greene"],
+      "schedule": "Weekends"
+    }
+  ],
+  "neighborhoods": [
+    {
+      "name": "Greenwich Village",
+      "description": "Bohemian neighborhood with tree-lined streets",
+      "highlights": ["Washington Square Park", "Comedy clubs", "Jazz clubs"]
+    },
+    {
+      "name": "Lower East Side",
+      "description": "Historic immigrant neighborhood, now trendy",
+      "highlights": ["Tenement Museum", "Vintage shops", "Nightlife"]
+    },
+    {
+      "name": "Meatpacking District",
+      "description": "Former industrial area, now upscale dining and shopping",
+      "highlights": ["High Line entrance", "Whitney Museum", "Rooftop bars"]
+    }
+  ],
+  "nightlife": {
+    "areas": ["East Village", "Lower East Side", "Meatpacking District", "Williamsburg"],
+    "types": ["Rooftop bars", "Speakeasies", "Dance clubs", "Jazz clubs"],
+    "lateNight": "City that never sleeps - many venues open until 4 AM",
+    "note": "Legal drinking age is 21, ID required everywhere"
+  },
+  "tips": [
+    "Walk fast and stay to the right",
+    "Don't stop in the middle of sidewalks",
+    "Tipping 18-20% is standard at restaurants",
+    "Subway runs 24/7 but service may be limited late night",
+    "Street food is generally safe and delicious",
+    "Always look up - amazing architecture everywhere",
+    "Free events happen daily - check NYC.gov",
+    "Many museums have 'pay what you wish' hours",
+    "Book restaurant reservations well in advance",
+    "Times Square is tourist central - locals avoid it"
+  ],
+  "budgetGuideline": {
+    "budget": "$75-120/day",
+    "midRange": "$120-200/day",
+    "luxury": "$200+/day",
+    "note": "Accommodation is the biggest expense - consider staying in outer boroughs"
+  },
+  "safety": {
+    "general": "Generally very safe, especially in tourist areas",
+    "subwayTips": ["Stay alert", "Keep belongings secure", "Trust your instincts"],
+    "avoid": "Poorly lit areas late at night, empty subway cars",
+    "emergency": "911 for emergencies, 311 for city services"
+  },
+  "freeActivities": [
+    "Central Park",
+    "Staten Island Ferry (great Statue of Liberty views)",
+    "High Line",
+    "Brooklyn Bridge walk",
+    "Times Square people watching",
+    "Free concerts in parks (summer)",
+    "Museum free hours",
+    "Window shopping on Fifth Avenue"
+  ]
+}
