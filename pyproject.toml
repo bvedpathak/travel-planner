@@ -20,11 +20,12 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
 ]
 keywords = ["mcp", "travel", "planning", "api", "server"]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
     "mcp",
     "pydantic",
@@ -72,7 +73,7 @@ profile = "black"
 line_length = 100
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.13"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
