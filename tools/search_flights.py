@@ -1,143 +1,247 @@
 """
 Flight search tool for the Travel Planner MCP Server.
 
-Provides mock flight data that simulates real airline APIs.
-In a production environment, this would integrate with actual airline APIs.
+Integrates with Booking.com RapidAPI for live flight data.
 """
 
-import random
-import json
-from datetime import datetime, timedelta
-from typing import List, Dict, Any
+import aiohttp
+import yaml
+import os
+from datetime import datetime
+from typing import Dict, Any
 
-# Mock flight data - in production, this would come from airline APIs
-AIRLINES = [
-    {"code": "UA", "name": "United Airlines"},
-    {"code": "AA", "name": "American Airlines"},
-    {"code": "DL", "name": "Delta Air Lines"},
-    {"code": "SW", "name": "Southwest Airlines"},
-    {"code": "B6", "name": "JetBlue Airways"},
-    {"code": "AS", "name": "Alaska Airlines"}
-]
+def load_config():
+    """Load API configuration from config.yaml"""
+    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.yaml')
+    with open(config_path, 'r') as file:
+        return yaml.safe_load(file)
 
-AIRPORTS = {
-    "AUS": {"name": "Austin-Bergstrom International", "city": "Austin", "timezone": "America/Chicago"},
-    "SFO": {"name": "San Francisco International", "city": "San Francisco", "timezone": "America/Los_Angeles"},
-    "NYC": {"name": "John F. Kennedy International", "city": "New York", "timezone": "America/New_York"},
-    "JFK": {"name": "John F. Kennedy International", "city": "New York", "timezone": "America/New_York"},
-    "LAX": {"name": "Los Angeles International", "city": "Los Angeles", "timezone": "America/Los_Angeles"},
-    "ORD": {"name": "O'Hare International", "city": "Chicago", "timezone": "America/Chicago"},
-    "DEN": {"name": "Denver International", "city": "Denver", "timezone": "America/Denver"},
-    "MIA": {"name": "Miami International", "city": "Miami", "timezone": "America/New_York"},
-    "SEA": {"name": "Seattle-Tacoma International", "city": "Seattle", "timezone": "America/Los_Angeles"},
-    "BOS": {"name": "Logan International", "city": "Boston", "timezone": "America/New_York"}
-}
+def format_price(price_obj):
+    """Format price object to readable string"""
+    if not price_obj:
+        return "N/A"
 
-async def search_flights(from_city: str, to_city: str, date: str, passengers: int = 1) -> Dict[str, Any]:
+    currency = price_obj.get("currencyCode", "USD")
+    units = price_obj.get("units", 0)
+    nanos = price_obj.get("nanos", 0)
+
+    # Convert nanos to decimal (nanos are billionths)
+    total = units + (nanos / 1_000_000_000)
+    return f"{currency} {total:.2f}"
+
+def format_duration(total_seconds):
+    """Convert seconds to hours and minutes"""
+    if not total_seconds:
+        return "N/A"
+
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    return f"{hours}h {minutes}m"
+
+def parse_flight_offer(offer):
+    """Parse a flight offer from the API response into simplified format"""
+    try:
+        segments = offer.get("segments", [])
+        if not segments:
+            return None
+
+        # Get price information
+        price_breakdown = offer.get("priceBreakdown", {})
+        total_price = price_breakdown.get("total", {})
+
+        # Parse segments (outbound and return for round trips)
+        parsed_segments = []
+        for segment in segments:
+            legs = segment.get("legs", [])
+            if not legs:
+                continue
+
+            # For now, take the first leg (direct flights or first leg of connection)
+            leg = legs[0]
+
+            segment_data = {
+                "departure": {
+                    "airport": leg["departureAirport"]["code"],
+                    "airportName": leg["departureAirport"]["name"],
+                    "city": leg["departureAirport"]["cityName"],
+                    "time": leg["departureTime"].split("T")[1][:5],  # Extract time from ISO format
+                    "date": leg["departureTime"].split("T")[0]  # Extract date
+                },
+                "arrival": {
+                    "airport": leg["arrivalAirport"]["code"],
+                    "airportName": leg["arrivalAirport"]["name"],
+                    "city": leg["arrivalAirport"]["cityName"],
+                    "time": leg["arrivalTime"].split("T")[1][:5],
+                    "date": leg["arrivalTime"].split("T")[0]
+                },
+                "duration": format_duration(leg.get("totalTime")),
+                "flightNumber": f"{leg['flightInfo']['carrierInfo']['marketingCarrier']}{leg['flightInfo']['flightNumber']}",
+                "airline": leg["carriersData"][0]["name"] if leg.get("carriersData") else "Unknown",
+                "stops": len(leg.get("flightStops", [])),
+                "cabinClass": leg.get("cabinClass", "ECONOMY")
+            }
+            parsed_segments.append(segment_data)
+
+        return {
+            "segments": parsed_segments,
+            "totalPrice": format_price(total_price),
+            "priceBreakdown": {
+                "baseFare": format_price(price_breakdown.get("baseFare")),
+                "taxes": format_price(price_breakdown.get("tax")),
+                "total": format_price(total_price)
+            },
+            "tripType": offer.get("tripType", "UNKNOWN"),
+            "bookingToken": offer.get("token"),
+            "isRoundTrip": len(segments) > 1
+        }
+
+    except Exception as e:
+        # Log error but don't fail the entire request
+        print(f"Error parsing flight offer: {e}")
+        return None
+
+async def search_flights(
+    from_id: str,
+    to_id: str,
+    depart_date: str,
+    return_date: str = None,
+    adults: int = 1,
+    children: int = 0,
+    stops: str = "none",
+    cabin_class: str = "ECONOMY",
+    currency_code: str = "USD"
+) -> Dict[str, Any]:
     """
-    Search for flights between two cities.
+    Search for flights between two cities using Booking.com RapidAPI.
 
     Args:
-        from_city: Departure airport code
-        to_city: Arrival airport code
-        date: Travel date in YYYY-MM-DD format
-        passengers: Number of passengers
+        from_id: Departure airport code (e.g., BOM.AIRPORT)
+        to_id: Arrival airport code (e.g., DEL.AIRPORT)
+        depart_date: Departure date in YYYY-MM-DD format
+        return_date: Return date in YYYY-MM-DD format (optional for round trip)
+        adults: Number of adult passengers (default: 1)
+        children: Number of child passengers (default: 0)
+        stops: Number of stops - "none", "one", "any" (default: "none")
+        cabin_class: Cabin class - "ECONOMY", "PREMIUM_ECONOMY", "BUSINESS", "FIRST" (default: "ECONOMY")
+        currency_code: Currency code (default: "USD")
 
     Returns:
         Dictionary containing flight search results with metadata
     """
 
-    # Validate airport codes
-    if from_city not in AIRPORTS:
-        return {
-            "error": f"Unknown departure airport code: {from_city}",
-            "valid_codes": list(AIRPORTS.keys())
-        }
-
-    if to_city not in AIRPORTS:
-        return {
-            "error": f"Unknown arrival airport code: {to_city}",
-            "valid_codes": list(AIRPORTS.keys())
-        }
-
-    # Validate date format
     try:
-        flight_date = datetime.strptime(date, "%Y-%m-%d")
-        if flight_date < datetime.now():
-            return {"error": "Flight date cannot be in the past"}
+        # Validate date format
+        datetime.strptime(depart_date, "%Y-%m-%d")
+        if return_date:
+            datetime.strptime(return_date, "%Y-%m-%d")
     except ValueError:
         return {"error": "Invalid date format. Use YYYY-MM-DD"}
 
-    # Generate mock flight results
-    flights = []
-    num_flights = random.randint(3, 8)  # Random number of available flights
+    # Load API configuration
+    try:
+        config = load_config()
+        api_config = config['flight_api']['rapidapi']
+    except Exception as e:
+        return {"error": f"Failed to load API configuration: {str(e)}"}
 
-    for i in range(num_flights):
-        airline = random.choice(AIRLINES)
-        flight_number = f"{airline['code']}{random.randint(100, 9999)}"
-
-        # Generate realistic departure times
-        departure_hour = random.randint(6, 22)
-        departure_minute = random.choice([0, 15, 30, 45])
-        departure_time = f"{departure_hour:02d}:{departure_minute:02d}"
-
-        # Calculate arrival time (1-6 hours later depending on distance)
-        base_duration = random.randint(60, 360)  # 1-6 hours in minutes
-        departure_dt = datetime.strptime(f"{date} {departure_time}", "%Y-%m-%d %H:%M")
-        arrival_dt = departure_dt + timedelta(minutes=base_duration)
-        arrival_time = arrival_dt.strftime("%H:%M")
-
-        # Generate realistic pricing
-        base_price = random.randint(150, 800)
-        total_price = base_price * passengers
-
-        # Add some variation for different booking classes
-        booking_class = random.choice(["Economy", "Premium Economy", "Business"])
-        if booking_class == "Premium Economy":
-            total_price = int(total_price * 1.3)
-        elif booking_class == "Business":
-            total_price = int(total_price * 2.2)
-
-        flight = {
-            "flightNumber": flight_number,
-            "airline": airline["name"],
-            "departure": {
-                "airport": from_city,
-                "airportName": AIRPORTS[from_city]["name"],
-                "city": AIRPORTS[from_city]["city"],
-                "time": departure_time,
-                "date": date
-            },
-            "arrival": {
-                "airport": to_city,
-                "airportName": AIRPORTS[to_city]["name"],
-                "city": AIRPORTS[to_city]["city"],
-                "time": arrival_time,
-                "date": date if arrival_dt.date() == departure_dt.date() else arrival_dt.strftime("%Y-%m-%d")
-            },
-            "duration": f"{base_duration // 60}h {base_duration % 60}m",
-            "price": total_price,
-            "pricePerPerson": base_price,
-            "bookingClass": booking_class,
-            "passengers": passengers,
-            "stops": random.choice([0, 0, 0, 1]),  # Most flights are direct
-            "aircraft": random.choice(["Boeing 737", "Airbus A320", "Boeing 777", "Airbus A350"])
-        }
-
-        flights.append(flight)
-
-    # Sort flights by price
-    flights.sort(key=lambda x: x["price"])
-
-    return {
-        "searchCriteria": {
-            "from": from_city,
-            "to": to_city,
-            "date": date,
-            "passengers": passengers
-        },
-        "resultsFound": len(flights),
-        "flights": flights,
-        "searchTimestamp": datetime.now().isoformat(),
-        "note": "This is mock data. In production, this would integrate with real airline APIs."
+    # Prepare API request parameters
+    params = {
+        "fromId": from_id,
+        "toId": to_id,
+        "departDate": depart_date,
+        "pageNo": "1",
+        "adults": str(adults),
+        "children": f"{children}%2C17",
+        "sort": "BEST",
+        "cabinClass": cabin_class,
+        "currency_code": currency_code,
+        "stops": stops
     }
+
+    if return_date:
+        params["returnDate"] = return_date
+
+    headers = {
+        "X-RapidAPI-Host": api_config['host'],
+        "X-RapidAPI-Key": api_config['key']
+    }
+
+    # Make API request
+    try:
+        async with aiohttp.ClientSession() as session:
+            url = f"{api_config['base_url']}/searchFlights"
+            async with session.get(url, params=params, headers=headers) as response:
+                if response.status == 200:
+                    data = await response.json()
+
+                    # Check if API returned an error
+                    if not data.get("status") or "error" in data.get("data", {}):
+                        error_info = data.get("data", {}).get("error", {})
+                        return {
+                            "error": f"API Error: {error_info.get('code', 'Unknown error')}",
+                            "requestId": error_info.get('requestId'),
+                            "searchCriteria": {
+                                "from": from_id,
+                                "to": to_id,
+                                "departDate": depart_date,
+                                "returnDate": return_date,
+                                "adults": adults,
+                                "children": children,
+                                "cabinClass": cabin_class,
+                                "stops": stops
+                            }
+                        }
+
+                    # Transform successful response to user-friendly format
+                    flight_offers = data.get("data", {}).get("flightOffers", [])
+                    aggregation = data.get("data", {}).get("aggregation", {})
+
+                    # Convert flight offers to simplified format
+                    flights = []
+                    for offer in flight_offers[:10]:  # Limit to first 10 results
+                        flight = parse_flight_offer(offer)
+                        if flight:
+                            flights.append(flight)
+
+                    return {
+                        "searchCriteria": {
+                            "from": from_id,
+                            "to": to_id,
+                            "departDate": depart_date,
+                            "returnDate": return_date,
+                            "adults": adults,
+                            "children": children,
+                            "cabinClass": cabin_class,
+                            "stops": stops
+                        },
+                        "resultsFound": len(flight_offers),
+                        "resultsDisplayed": len(flights),
+                        "summary": {
+                            "totalFlights": aggregation.get("totalCount", 0),
+                            "minPrice": format_price(aggregation.get("minPrice")),
+                            "priceRange": f"{format_price(aggregation.get('minPrice'))} - {format_price(aggregation.get('budget', {}).get('max'))}",
+                            "airlines": len(aggregation.get("airlines", [])),
+                            "directFlights": next((stop["count"] for stop in aggregation.get("stops", []) if stop.get("numberOfStops") == 0), 0)
+                        },
+                        "flights": flights,
+                        "searchTimestamp": datetime.now().isoformat(),
+                        "source": "Booking.com RapidAPI"
+                    }
+                else:
+                    error_text = await response.text()
+                    return {
+                        "error": f"API request failed with status {response.status}",
+                        "details": error_text
+                    }
+    except Exception as e:
+        return {
+            "error": f"Failed to fetch flight data: {str(e)}",
+            "searchCriteria": {
+                "from": from_id,
+                "to": to_id,
+                "departDate": depart_date,
+                "returnDate": return_date,
+                "adults": adults,
+                "children": children
+            }
+        }
