@@ -19,12 +19,12 @@ This server demonstrates key MCP concepts:
 import asyncio
 import json
 import logging
-from typing import Any, Dict, List, Optional
-from datetime import datetime, timedelta
+from typing import Any, Dict, List
 
 import mcp.types as types
+import mcp.server.stdio
 from mcp.server.models import InitializationOptions
-from mcp.server import NotificationOptions, Server
+from mcp.server import Server
 from pydantic import AnyUrl
 
 from tools.search_flights import search_flights
