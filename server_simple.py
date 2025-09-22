@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Simplified Travel Planner MCP Server for better compatibility
+Simplified Travel Planner MCP Server for better compatibility with Claude AI
 """
 
 import asyncio
