@@ -33,11 +33,11 @@ from tools.search_cars import search_cars
 from tools.search_trains import search_trains
 from tools.generate_itinerary import generate_itinerary
 
-# Configure logging
+# Configure logging for development and production monitoring
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("travel-planner")
 
-# Initialize the MCP server
+# Initialize the MCP server with travel-planner identifier
 server = Server("travel-planner")
 
 @server.list_tools()

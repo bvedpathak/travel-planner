@@ -96,19 +96,20 @@ async def search_hotels(city: str, check_in: str, nights: int, guests: int = 2) 
     if nights < 1 or nights > 30:
         return {"error": "Number of nights must be between 1 and 30"}
 
-    # Generate hotel results
+    # Generate hotel results by simulating availability
     city_hotels = HOTELS_BY_CITY[city].copy()
     available_hotels = []
 
-    # Simulate some hotels being unavailable
+    # Simulate some hotels being unavailable (realistic booking scenario)
+    # Ensure at least 3 hotels are available, but not all
     num_available = random.randint(max(3, len(city_hotels) - 3), len(city_hotels))
     available_city_hotels = random.sample(city_hotels, num_available)
 
     for hotel_data in available_city_hotels:
-        # Generate room types and pricing
+        # Generate room types and pricing based on hotel category
         room_types = []
 
-        # Standard room
+        # Standard room - available at all hotels
         base_price = _get_base_price(hotel_data["category"])
         room_types.append({
             "type": "Standard Room",
@@ -119,7 +120,7 @@ async def search_hotels(city: str, check_in: str, nights: int, guests: int = 2) 
             "roomSize": "300 sq ft"
         })
 
-        # Deluxe room (if luxury or resort)
+        # Deluxe room - only available at luxury and resort properties
         if hotel_data["category"] in ["luxury", "resort"]:
             deluxe_price = int(base_price * 1.4)
             room_types.append({
@@ -131,7 +132,7 @@ async def search_hotels(city: str, check_in: str, nights: int, guests: int = 2) 
                 "roomSize": "400 sq ft"
             })
 
-        # Suite (if luxury)
+        # Executive suite - exclusive to luxury hotels
         if hotel_data["category"] == "luxury":
             suite_price = int(base_price * 2.2)
             room_types.append({
@@ -193,7 +194,18 @@ async def search_hotels(city: str, check_in: str, nights: int, guests: int = 2) 
     }
 
 def _get_base_price(category: str) -> int:
-    """Generate realistic base prices based on hotel category."""
+    """
+    Generate realistic base prices based on hotel category.
+
+    Args:
+        category: Hotel category (budget, business, boutique, luxury, resort).
+
+    Returns:
+        int: Random base price within the category's price range.
+
+    Note:
+        Prices are per night in USD and represent typical market rates.
+    """
     price_ranges = {
         "budget": (50, 100),
         "business": (120, 200),

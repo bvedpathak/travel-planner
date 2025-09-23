@@ -10,14 +10,34 @@ import os
 from datetime import datetime
 from typing import Dict, Any
 
-def load_config():
-    """Load API configuration from config.yaml"""
+def load_config() -> dict:
+    """
+    Load API configuration from config.yaml.
+
+    Returns:
+        dict: Configuration dictionary containing API keys and endpoints.
+
+    Raises:
+        FileNotFoundError: If config.yaml is not found.
+        yaml.YAMLError: If config.yaml is malformed.
+    """
     config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.yaml')
     with open(config_path, 'r') as file:
         return yaml.safe_load(file)
 
-def format_price(price_obj):
-    """Format price object to readable string"""
+def format_price(price_obj: dict) -> str:
+    """
+    Format price object from API response to a readable string.
+
+    Args:
+        price_obj: Price object containing currency, units, and nanos fields.
+
+    Returns:
+        str: Formatted price string like "USD 123.45" or "N/A" if invalid.
+
+    Note:
+        Nanos field represents billionths of the currency unit.
+    """
     if not price_obj:
         return "N/A"
 
@@ -29,8 +49,16 @@ def format_price(price_obj):
     total = units + (nanos / 1_000_000_000)
     return f"{currency} {total:.2f}"
 
-def format_duration(total_seconds):
-    """Convert seconds to hours and minutes"""
+def format_duration(total_seconds: int) -> str:
+    """
+    Convert seconds to a human-readable hours and minutes format.
+
+    Args:
+        total_seconds: Total duration in seconds.
+
+    Returns:
+        str: Formatted duration string like "4h 30m" or "N/A" if invalid.
+    """
     if not total_seconds:
         return "N/A"
 
@@ -38,8 +66,19 @@ def format_duration(total_seconds):
     minutes = (total_seconds % 3600) // 60
     return f"{hours}h {minutes}m"
 
-def parse_flight_offer(offer):
-    """Parse a flight offer from the API response into simplified format"""
+def parse_flight_offer(offer: dict) -> dict | None:
+    """
+    Parse a complex flight offer from the API response into a simplified format.
+
+    Args:
+        offer: Raw flight offer object from Booking.com API.
+
+    Returns:
+        dict: Simplified flight offer with standardized structure, or None if parsing fails.
+
+    Note:
+        Handles both one-way and round-trip flights. Errors are logged but don't fail the entire request.
+    """
     try:
         segments = offer.get("segments", [])
         if not segments:

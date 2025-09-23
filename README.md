@@ -606,10 +606,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Travel APIs**: Inspiration from various travel booking platforms
 - **Open Source Community**: For tools and libraries that made development easier
 
+## 📚 Documentation
+
+- **[API Documentation](docs/API.md)**: Complete API reference with examples
+- **[Development Guide](docs/DEVELOPMENT.md)**: Setup, testing, and contribution guide
+- **[README](README.md)**: This file - overview and quick start
+
 ## 📞 Support
 
-- **Issues**: Report bugs or request features via [GitHub Issues](https://github.com/yourusername/travel-planner/issues)
-- **Discussions**: Join conversations in [GitHub Discussions](https://github.com/yourusername/travel-planner/discussions)
+- **Issues**: Report bugs or request features via [GitHub Issues](https://github.com/bvedpathak/travel-planner/issues)
+- **Discussions**: Join conversations in [GitHub Discussions](https://github.com/bvedpathak/travel-planner/discussions)
 - **Documentation**: Full documentation available in the `/docs` directory
 
 ---
