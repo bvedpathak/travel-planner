@@ -3,3 +3,9 @@ flight_api:
     host: "booking-com15.p.rapidapi.com"
     key: "33c1770a13msh6103b9dbb191538p14daa3jsn8b0bcad93efd"
     base_url: "https://booking-com15.p.rapidapi.com/api/v1/flights"
+
+car_api:
+  rapidapi:
+    host: "booking-com15.p.rapidapi.com"
+    key: "33c1770a13msh6103b9dbb191538p14daa3jsn8b0bcad93efd"
+    base_url: "https://booking-com15.p.rapidapi.com/api/v1/cars"

@@ -1,233 +1,254 @@
 """
 Car rental search tool for the Travel Planner MCP Server.
 
-Provides mock car rental data that simulates real car rental APIs.
-In a production environment, this would integrate with APIs like Hertz, Enterprise, or Budget.
+Integrates with Booking.com RapidAPI for live car rental data.
 """
 
-import random
-import json
-from datetime import datetime, timedelta
-from typing import List, Dict, Any, Optional
+import aiohttp
+import yaml
+import os
+from datetime import datetime
+from typing import Dict, Any, Optional
 
-# Mock car rental companies and their fleets
-CAR_COMPANIES = {
-    "Hertz": {
-        "economy": ["Nissan Versa", "Chevrolet Spark", "Mitsubishi Mirage"],
-        "compact": ["Nissan Sentra", "Toyota Corolla", "Honda Civic"],
-        "midsize": ["Toyota Camry", "Honda Accord", "Nissan Altima"],
-        "suv": ["Toyota RAV4", "Honda CR-V", "Chevrolet Tahoe"]
-    },
-    "Enterprise": {
-        "economy": ["Chevrolet Spark", "Nissan Versa", "Kia Rio"],
-        "compact": ["Honda Civic", "Toyota Corolla", "Nissan Sentra"],
-        "midsize": ["Honda Accord", "Toyota Camry", "Chevrolet Malibu"],
-        "suv": ["Honda CR-V", "Toyota RAV4", "Ford Explorer"]
-    },
-    "Budget": {
-        "economy": ["Mitsubishi Mirage", "Chevrolet Spark", "Kia Rio"],
-        "compact": ["Toyota Corolla", "Nissan Sentra", "Honda Civic"],
-        "midsize": ["Toyota Camry", "Honda Accord", "Nissan Altima"],
-        "suv": ["Toyota RAV4", "Honda CR-V", "Chevrolet Suburban"]
-    },
-    "Avis": {
-        "economy": ["Nissan Versa", "Kia Rio", "Chevrolet Spark"],
-        "compact": ["Honda Civic", "Toyota Corolla", "Nissan Sentra"],
-        "midsize": ["Honda Accord", "Toyota Camry", "Chevrolet Malibu"],
-        "suv": ["Honda CR-V", "Toyota RAV4", "Ford Expedition"]
-    },
-    "National": {
-        "economy": ["Chevrolet Spark", "Nissan Versa", "Mitsubishi Mirage"],
-        "compact": ["Toyota Corolla", "Honda Civic", "Nissan Sentra"],
-        "midsize": ["Toyota Camry", "Honda Accord", "Nissan Altima"],
-        "suv": ["Toyota RAV4", "Honda CR-V", "Chevrolet Tahoe"]
-    }
-}
+def load_config():
+    """Load API configuration from config.yaml"""
+    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.yaml')
+    with open(config_path, 'r') as file:
+        return yaml.safe_load(file)
 
-PICKUP_LOCATIONS = {
-    "Austin": ["Austin Airport", "Downtown Austin", "South Congress", "The Domain", "East Austin"],
-    "San Francisco": ["SFO Airport", "Downtown SF", "Union Square", "Financial District", "Mission District"],
-    "New York": ["JFK Airport", "LaGuardia Airport", "Manhattan", "Brooklyn", "Times Square"],
-    "Miami": ["Miami Airport", "South Beach", "Downtown Miami", "Coral Gables", "Brickell"],
-    "Los Angeles": ["LAX Airport", "Downtown LA", "Hollywood", "Santa Monica", "Beverly Hills"],
-    "Chicago": ["O'Hare Airport", "Downtown Chicago", "Lincoln Park", "Millennium Park"],
-    "Seattle": ["Seattle Airport", "Downtown Seattle", "Capitol Hill", "Fremont"],
-    "Denver": ["Denver Airport", "Downtown Denver", "LoDo", "Cherry Creek"]
-}
+def format_price(price_obj):
+    """Format price object to readable string"""
+    if not price_obj:
+        return "N/A"
 
-CAR_FEATURES = [
-    "Air Conditioning", "Automatic Transmission", "GPS Navigation", "Bluetooth",
-    "USB Charging", "Backup Camera", "Cruise Control", "Power Windows",
-    "Power Locks", "AM/FM Radio", "Satellite Radio", "WiFi Hotspot"
-]
+    if isinstance(price_obj, dict):
+        currency = price_obj.get("currencyCode", "USD")
+        units = price_obj.get("units", 0)
+        nanos = price_obj.get("nanos", 0)
+        total = units + (nanos / 1_000_000_000)
+        return f"{currency} {total:.2f}"
+    elif isinstance(price_obj, (int, float)):
+        return f"USD {price_obj:.2f}"
+    else:
+        return str(price_obj)
 
-async def search_cars(city: str, pickup_date: str, days: int, car_type: Optional[str] = None) -> Dict[str, Any]:
+def parse_car_rental(rental):
+    """Parse a car rental from the API response into simplified format"""
+    try:
+        # Based on the actual API response structure from rentalcars provider
+        # The structure includes: vendor, vehicle, pricing, etc.
+
+        # Extract basic information
+        vendor = rental.get("vendor", {})
+        vehicle = rental.get("vehicle", {})
+        pricing = rental.get("pricing", {})
+        location_info = rental.get("location", {})
+
+        # Extract vehicle details
+        vehicle_info = vehicle.get("vehicle_info", {})
+
+        return {
+            "company": vendor.get("name", "Unknown"),
+            "carType": vehicle_info.get("category", vehicle.get("category", "Unknown")),
+            "model": vehicle_info.get("name", vehicle.get("name", "Unknown")),
+            "pickupLocation": location_info.get("pickup", {}).get("location", "Unknown"),
+            "dropoffLocation": location_info.get("dropoff", {}).get("location", "Unknown"),
+            "pickupDate": rental.get("pickup_date"),
+            "returnDate": rental.get("dropoff_date"),
+            "pricing": {
+                "totalCost": format_price(pricing.get("total_price", pricing.get("total"))),
+                "dailyRate": format_price(pricing.get("daily_price", pricing.get("daily"))),
+                "currency": pricing.get("currency", "USD"),
+                "breakdown": {
+                    "base": format_price(pricing.get("base_price")),
+                    "taxes": format_price(pricing.get("taxes")),
+                    "fees": format_price(pricing.get("fees"))
+                }
+            },
+            "specifications": {
+                "passengers": vehicle_info.get("passengers", vehicle.get("seats", "N/A")),
+                "doors": vehicle_info.get("doors", vehicle.get("doors", "N/A")),
+                "transmission": vehicle_info.get("transmission", "N/A"),
+                "fuelType": vehicle_info.get("fuel_type", vehicle.get("fuel", "N/A")),
+                "airConditioning": vehicle_info.get("air_conditioning", vehicle.get("airConditioning", False)),
+                "category": vehicle_info.get("category", "N/A")
+            },
+            "policies": {
+                "mileage": rental.get("mileage_policy", "Check with supplier"),
+                "fuelPolicy": rental.get("fuel_policy", "Check with supplier"),
+                "cancellation": rental.get("cancellation_policy", "Check with supplier"),
+                "minimumAge": rental.get("minimum_age", 21)
+            },
+            "supplier": vendor,
+            "bookingToken": rental.get("booking_token", rental.get("id")),
+            "features": rental.get("features", []),
+            "insurance": rental.get("insurance", {}),
+            "rating": vendor.get("rating", "N/A")
+        }
+    except Exception as e:
+        print(f"Error parsing car rental: {e}")
+        return None
+
+async def search_cars(
+    pick_up_latitude: float,
+    pick_up_longitude: float,
+    drop_off_latitude: float,
+    drop_off_longitude: float,
+    pick_up_date: str,
+    drop_off_date: str,
+    pick_up_time: str = "10:00",
+    drop_off_time: str = "10:00",
+    driver_age: int = 30,
+    currency_code: str = "USD",
+    location: str = "US"
+) -> Dict[str, Any]:
     """
-    Search for rental cars in a specified city.
+    Search for rental cars using Booking.com RapidAPI.
 
     Args:
-        city: City name for car rental pickup
-        pickup_date: Pickup date in YYYY-MM-DD format
-        days: Number of rental days
-        car_type: Preferred car type (optional)
+        pick_up_latitude: Latitude for pickup location
+        pick_up_longitude: Longitude for pickup location
+        drop_off_latitude: Latitude for drop-off location
+        drop_off_longitude: Longitude for drop-off location
+        pick_up_date: Pickup date in YYYY-MM-DD format
+        drop_off_date: Drop-off date in YYYY-MM-DD format
+        pick_up_time: Pickup time in HH:MM format (default: 10:00)
+        drop_off_time: Drop-off time in HH:MM format (default: 10:00)
+        driver_age: Driver age (default: 30)
+        currency_code: Currency code (default: USD)
+        location: Location code (default: US)
 
     Returns:
         Dictionary containing car rental search results with metadata
     """
 
-    # Validate city
-    if city not in PICKUP_LOCATIONS:
-        return {
-            "error": f"Car rentals not available in: {city}",
-            "available_cities": list(PICKUP_LOCATIONS.keys())
-        }
-
-    # Validate pickup date
     try:
-        pickup_dt = datetime.strptime(pickup_date, "%Y-%m-%d")
-        if pickup_dt < datetime.now():
-            return {"error": "Pickup date cannot be in the past"}
-        return_dt = pickup_dt + timedelta(days=days)
+        # Validate date format
+        datetime.strptime(pick_up_date, "%Y-%m-%d")
+        datetime.strptime(drop_off_date, "%Y-%m-%d")
     except ValueError:
-        return {"error": "Invalid pickup date format. Use YYYY-MM-DD"}
+        return {"error": "Invalid date format. Use YYYY-MM-DD"}
 
-    # Validate rental duration
-    if days < 1 or days > 60:
-        return {"error": "Rental duration must be between 1 and 60 days"}
+    # Load API configuration
+    try:
+        config = load_config()
+        api_config = config['car_api']['rapidapi']
+    except Exception as e:
+        return {"error": f"Failed to load API configuration: {str(e)}"}
 
-    # Validate car type if specified
-    valid_car_types = ["economy", "compact", "midsize", "suv"]
-    if car_type and car_type not in valid_car_types:
+    # Prepare API request parameters
+    params = {
+        "pick_up_latitude": str(pick_up_latitude),
+        "pick_up_longitude": str(pick_up_longitude),
+        "drop_off_latitude": str(drop_off_latitude),
+        "drop_off_longitude": str(drop_off_longitude),
+        "pick_up_date": pick_up_date,
+        "drop_off_date": drop_off_date,
+        "pick_up_time": pick_up_time,
+        "drop_off_time": drop_off_time,
+        "driver_age": str(driver_age),
+        "currency_code": currency_code,
+        "location": location
+    }
+
+    headers = {
+        "X-RapidAPI-Host": api_config['host'],
+        "X-RapidAPI-Key": api_config['key']
+    }
+
+    # Make API request
+    try:
+        async with aiohttp.ClientSession() as session:
+            url = f"{api_config['base_url']}/searchCarRentals"
+            async with session.get(url, params=params, headers=headers) as response:
+                if response.status == 200:
+                    data = await response.json()
+
+                    # Check if API returned success status
+                    if not data.get("status"):
+                        return {
+                            "error": f"API Error: {data.get('message', 'Unknown error')}",
+                            "searchCriteria": {
+                                "pickupLocation": f"Lat: {pick_up_latitude}, Lng: {pick_up_longitude}",
+                                "dropoffLocation": f"Lat: {drop_off_latitude}, Lng: {drop_off_longitude}",
+                                "pickupDate": pick_up_date,
+                                "dropoffDate": drop_off_date,
+                                "driverAge": driver_age,
+                                "currency": currency_code
+                            }
+                        }
+
+                    # Transform successful response to user-friendly format
+                    data_section = data.get("data", {})
+                    car_rentals = data_section.get("search_results", [])
+                    count = data_section.get("count", 0)
+                    provider = data_section.get("provider", "Unknown")
+
+                    # Convert car rentals to simplified format
+                    cars = []
+                    for rental in car_rentals[:15]:  # Limit to first 15 results
+                        car = parse_car_rental(rental)
+                        if car:
+                            cars.append(car)
+
+                    # Handle case where there are no search results
+                    if count == 0 and len(cars) == 0:
+                        return {
+                            "searchCriteria": {
+                                "pickupLocation": f"Lat: {pick_up_latitude}, Lng: {pick_up_longitude}",
+                                "dropoffLocation": f"Lat: {drop_off_latitude}, Lng: {drop_off_longitude}",
+                                "pickupDate": pick_up_date,
+                                "dropoffDate": drop_off_date,
+                                "pickupTime": pick_up_time,
+                                "dropoffTime": drop_off_time,
+                                "driverAge": driver_age,
+                                "currency": currency_code,
+                                "location": location
+                            },
+                            "resultsFound": 0,
+                            "resultsDisplayed": 0,
+                            "cars": [],
+                            "message": "No car rentals available for the specified criteria",
+                            "provider": provider,
+                            "searchTimestamp": datetime.now().isoformat(),
+                            "source": "Booking.com RapidAPI"
+                        }
+
+                    return {
+                        "searchCriteria": {
+                            "pickupLocation": f"Lat: {pick_up_latitude}, Lng: {pick_up_longitude}",
+                            "dropoffLocation": f"Lat: {drop_off_latitude}, Lng: {drop_off_longitude}",
+                            "pickupDate": pick_up_date,
+                            "dropoffDate": drop_off_date,
+                            "pickupTime": pick_up_time,
+                            "dropoffTime": drop_off_time,
+                            "driverAge": driver_age,
+                            "currency": currency_code,
+                            "location": location
+                        },
+                        "resultsFound": count,
+                        "resultsDisplayed": len(cars),
+                        "cars": cars,
+                        "provider": provider,
+                        "availableFilters": data_section.get("filter", []),
+                        "sortOptions": data_section.get("sort", []),
+                        "searchTimestamp": datetime.now().isoformat(),
+                        "source": "Booking.com RapidAPI"
+                    }
+                else:
+                    error_text = await response.text()
+                    return {
+                        "error": f"API request failed with status {response.status}",
+                        "details": error_text
+                    }
+    except Exception as e:
         return {
-            "error": f"Invalid car type: {car_type}",
-            "valid_types": valid_car_types
+            "error": f"Failed to fetch car rental data: {str(e)}",
+            "searchCriteria": {
+                "pickupLocation": f"Lat: {pick_up_latitude}, Lng: {pick_up_longitude}",
+                "dropoffLocation": f"Lat: {drop_off_latitude}, Lng: {drop_off_longitude}",
+                "pickupDate": pick_up_date,
+                "dropoffDate": drop_off_date
+            }
         }
 
-    # Generate car rental results
-    available_cars = []
-    companies = list(CAR_COMPANIES.keys())
-
-    # Determine which car types to show
-    car_types_to_show = [car_type] if car_type else valid_car_types
-
-    for company in companies:
-        for car_category in car_types_to_show:
-            # Simulate availability (not all companies have all types available)
-            if random.random() > 0.2:  # 80% chance of availability
-                available_models = CAR_COMPANIES[company][car_category]
-                model = random.choice(available_models)
-
-                # Generate pricing
-                base_price = _get_car_base_price(car_category)
-                daily_rate = base_price + random.randint(-20, 50)  # Add some variation
-                total_cost = daily_rate * days
-
-                # Add fees and taxes
-                taxes_fees = int(total_cost * random.uniform(0.15, 0.25))
-                final_total = total_cost + taxes_fees
-
-                # Generate pickup location
-                pickup_location = random.choice(PICKUP_LOCATIONS[city])
-
-                # Generate features
-                car_features = random.sample(CAR_FEATURES, random.randint(6, 10))
-
-                # Generate car specifications
-                specs = _get_car_specs(car_category)
-
-                car_rental = {
-                    "company": company,
-                    "carType": car_category.title(),
-                    "model": model,
-                    "pickupLocation": pickup_location,
-                    "city": city,
-                    "pickupDate": pickup_date,
-                    "returnDate": return_dt.strftime("%Y-%m-%d"),
-                    "rentalDays": days,
-                    "pricing": {
-                        "dailyRate": daily_rate,
-                        "subtotal": total_cost,
-                        "taxesAndFees": taxes_fees,
-                        "totalCost": final_total
-                    },
-                    "specifications": specs,
-                    "features": car_features,
-                    "policies": {
-                        "minimumAge": 21 if car_category in ["economy", "compact"] else 25,
-                        "mileage": "Unlimited mileage",
-                        "fuelPolicy": "Full to Full",
-                        "cancellation": "Free cancellation up to 24 hours before pickup"
-                    },
-                    "pickupTime": "9:00 AM - 6:00 PM",
-                    "contact": f"1-800-{company.upper()[:3]}-RENT"
-                }
-
-                available_cars.append(car_rental)
-
-    # Sort by total cost
-    available_cars.sort(key=lambda x: x["pricing"]["totalCost"])
-
-    return {
-        "searchCriteria": {
-            "city": city,
-            "pickupDate": pickup_date,
-            "returnDate": return_dt.strftime("%Y-%m-%d"),
-            "days": days,
-            "carType": car_type or "any"
-        },
-        "resultsFound": len(available_cars),
-        "cars": available_cars,
-        "searchTimestamp": datetime.now().isoformat(),
-        "note": "This is mock data. In production, this would integrate with real car rental APIs."
-    }
-
-def _get_car_base_price(car_type: str) -> int:
-    """Generate realistic base prices based on car category."""
-    price_ranges = {
-        "economy": (25, 45),
-        "compact": (35, 55),
-        "midsize": (45, 75),
-        "suv": (65, 120)
-    }
-
-    min_price, max_price = price_ranges.get(car_type, (40, 70))
-    return random.randint(min_price, max_price)
-
-def _get_car_specs(car_type: str) -> Dict[str, Any]:
-    """Generate car specifications based on category."""
-    specs = {
-        "economy": {
-            "passengers": "4-5",
-            "luggage": "2 bags",
-            "doors": "4",
-            "transmission": "Automatic",
-            "fuelType": "Gasoline",
-            "mpg": f"{random.randint(28, 35)}-{random.randint(36, 42)}"
-        },
-        "compact": {
-            "passengers": "5",
-            "luggage": "2-3 bags",
-            "doors": "4",
-            "transmission": "Automatic",
-            "fuelType": "Gasoline",
-            "mpg": f"{random.randint(26, 32)}-{random.randint(33, 38)}"
-        },
-        "midsize": {
-            "passengers": "5",
-            "luggage": "3-4 bags",
-            "doors": "4",
-            "transmission": "Automatic",
-            "fuelType": "Gasoline",
-            "mpg": f"{random.randint(22, 28)}-{random.randint(29, 35)}"
-        },
-        "suv": {
-            "passengers": "7-8",
-            "luggage": "4-6 bags",
-            "doors": "4",
-            "transmission": "Automatic",
-            "fuelType": "Gasoline",
-            "mpg": f"{random.randint(18, 24)}-{random.randint(25, 30)}"
-        }
-    }
-
-    return specs.get(car_type, specs["compact"])

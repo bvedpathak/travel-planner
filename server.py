@@ -130,29 +130,61 @@ async def handle_list_tools() -> List[types.Tool]:
         ),
         types.Tool(
             name="searchCars",
-            description="Search for rental cars in a city",
+            description="Search for rental cars using coordinates and dates",
             inputSchema={
                 "type": "object",
                 "properties": {
-                    "city": {
-                        "type": "string",
-                        "description": "City name for car pickup"
+                    "pick_up_latitude": {
+                        "type": "number",
+                        "description": "Latitude for pickup location"
                     },
-                    "pickupDate": {
+                    "pick_up_longitude": {
+                        "type": "number",
+                        "description": "Longitude for pickup location"
+                    },
+                    "drop_off_latitude": {
+                        "type": "number",
+                        "description": "Latitude for drop-off location"
+                    },
+                    "drop_off_longitude": {
+                        "type": "number",
+                        "description": "Longitude for drop-off location"
+                    },
+                    "pick_up_date": {
                         "type": "string",
                         "description": "Pickup date in YYYY-MM-DD format"
                     },
-                    "days": {
-                        "type": "integer",
-                        "description": "Number of rental days"
-                    },
-                    "carType": {
+                    "drop_off_date": {
                         "type": "string",
-                        "description": "Preferred car type (economy, compact, midsize, suv)",
-                        "enum": ["economy", "compact", "midsize", "suv"]
+                        "description": "Drop-off date in YYYY-MM-DD format"
+                    },
+                    "pick_up_time": {
+                        "type": "string",
+                        "description": "Pickup time in HH:MM format (default: 10:00)",
+                        "default": "10:00"
+                    },
+                    "drop_off_time": {
+                        "type": "string",
+                        "description": "Drop-off time in HH:MM format (default: 10:00)",
+                        "default": "10:00"
+                    },
+                    "driver_age": {
+                        "type": "integer",
+                        "description": "Driver age (default: 30)",
+                        "default": 30
+                    },
+                    "currency_code": {
+                        "type": "string",
+                        "description": "Currency code (default: USD)",
+                        "default": "USD"
+                    },
+                    "location": {
+                        "type": "string",
+                        "description": "Location code (default: US)",
+                        "default": "US"
                     }
                 },
-                "required": ["city", "pickupDate", "days"]
+                "required": ["pick_up_latitude", "pick_up_longitude", "drop_off_latitude", "drop_off_longitude", "pick_up_date", "drop_off_date"]
             }
         ),
         types.Tool(
@@ -238,10 +270,17 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[types.T
             )
         elif name == "searchCars":
             result = await search_cars(
-                city=arguments["city"],
-                pickup_date=arguments["pickupDate"],
-                days=arguments["days"],
-                car_type=arguments.get("carType")
+                pick_up_latitude=arguments["pick_up_latitude"],
+                pick_up_longitude=arguments["pick_up_longitude"],
+                drop_off_latitude=arguments["drop_off_latitude"],
+                drop_off_longitude=arguments["drop_off_longitude"],
+                pick_up_date=arguments["pick_up_date"],
+                drop_off_date=arguments["drop_off_date"],
+                pick_up_time=arguments.get("pick_up_time", "10:00"),
+                drop_off_time=arguments.get("drop_off_time", "10:00"),
+                driver_age=arguments.get("driver_age", 30),
+                currency_code=arguments.get("currency_code", "USD"),
+                location=arguments.get("location", "US")
             )
         elif name == "searchTrains":
             result = await search_trains(
