@@ -1,0 +1,1 @@
+"""SOLID-compliant tool implementations."""

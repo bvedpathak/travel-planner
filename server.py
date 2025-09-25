@@ -282,11 +282,29 @@ async def handle_call_tool(name: str, arguments: Dict[str, Any]) -> List[types.T
                 currency_code=arguments.get("currency_code", "USD")
             )
         elif name == "searchHotels":
+            # Handle both old and new parameter formats for backward compatibility
+            location = arguments.get("location") or arguments.get("city")
+            arrival_date = arguments.get("arrival_date") or arguments.get("checkIn")
+            departure_date = arguments.get("departure_date")
+
+            # If using old format with nights, calculate departure_date
+            if not departure_date and arguments.get("nights") and arrival_date:
+                from datetime import datetime, timedelta
+                arrival_dt = datetime.strptime(arrival_date, "%Y-%m-%d")
+                departure_dt = arrival_dt + timedelta(days=int(arguments["nights"]))
+                departure_date = departure_dt.strftime("%Y-%m-%d")
+
+            adults = arguments.get("adults") or arguments.get("guests", 1)
+
             result = await search_hotels(
-                city=arguments["city"],
-                check_in=arguments["checkIn"],
-                nights=arguments["nights"],
-                guests=arguments.get("guests", 2)
+                location=location,
+                arrival_date=arrival_date,
+                departure_date=departure_date,
+                adults=adults,
+                children_age=arguments.get("children_age", ""),
+                room_qty=arguments.get("room_qty", 1),
+                currency_code=arguments.get("currency_code", "USD"),
+                languagecode=arguments.get("languagecode", "en-us")
             )
         elif name == "searchCars":
             result = await search_cars(
