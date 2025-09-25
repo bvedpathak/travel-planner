@@ -103,29 +103,49 @@ async def handle_list_tools() -> List[types.Tool]:
         ),
         types.Tool(
             name="searchHotels",
-            description="Search for hotels in a city for specific dates",
+            description="Search for hotels in a location using live Booking.com API",
             inputSchema={
                 "type": "object",
                 "properties": {
-                    "city": {
+                    "location": {
                         "type": "string",
-                        "description": "City name (e.g., 'Austin', 'San Francisco')"
+                        "description": "City or location name (e.g., 'Austin', 'San Francisco', 'New York')"
                     },
-                    "checkIn": {
+                    "arrival_date": {
                         "type": "string",
                         "description": "Check-in date in YYYY-MM-DD format"
                     },
-                    "nights": {
-                        "type": "integer",
-                        "description": "Number of nights to stay"
+                    "departure_date": {
+                        "type": "string",
+                        "description": "Check-out date in YYYY-MM-DD format"
                     },
-                    "guests": {
+                    "adults": {
                         "type": "integer",
-                        "description": "Number of guests (default: 2)",
-                        "default": 2
+                        "description": "Number of adult guests (default: 1)",
+                        "default": 1
+                    },
+                    "children_age": {
+                        "type": "string",
+                        "description": "Ages of children separated by comma (e.g., '0,17')",
+                        "default": ""
+                    },
+                    "room_qty": {
+                        "type": "integer",
+                        "description": "Number of rooms required (default: 1)",
+                        "default": 1
+                    },
+                    "currency_code": {
+                        "type": "string",
+                        "description": "Currency code (default: 'USD')",
+                        "default": "USD"
+                    },
+                    "languagecode": {
+                        "type": "string",
+                        "description": "Language code (default: 'en-us')",
+                        "default": "en-us"
                     }
                 },
-                "required": ["city", "checkIn", "nights"]
+                "required": ["location", "arrival_date", "departure_date"]
             }
         ),
         types.Tool(
