@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.10, 3.11, 3.12]
+        python-version: ["3.10", "3.11", "3.12"]
 
     steps:
     - name: Checkout code
@@ -169,11 +169,14 @@ jobs:
         bandit -r core services tools tools_solid server.py server_solid.py \
           -f json -o reports/bandit-report.json || true
 
-    - name: SonarQube Scan
-      uses: sonarqube-quality-gate-action@master
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+    # - name: SonarQube Scan
+    #   uses: sonarqube-quality-gate-action@master
+    #   with:
+    #     scanMetadataReportFile: reports/.scannerwork/report-task.txt
+    #   env:
+    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+    #   # Uncomment and configure when SonarQube/SonarCloud is set up
 
   security-scan:
     name: Security Scan
