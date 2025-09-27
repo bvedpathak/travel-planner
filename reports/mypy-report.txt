@@ -1,0 +1,44 @@
+tools/search_trains.py:168: error: Unsupported operand types for + ("object" and "int")  [operator]
+tools/search_trains.py:181: error: "object" has no attribute "split"  [attr-defined]
+tools/search_trains.py:187: error: Unsupported left operand type for * ("object")  [operator]
+tools/search_trains.py:244: error: Value of type "object" is not indexable  [index]
+tools/search_trains.py:256: error: Unsupported operand types for // ("object" and "int")  [operator]
+tools/search_trains.py:256: error: Unsupported operand types for % ("object" and "int")  [operator]
+tools/generate_itinerary.py:670: error: Value of type "object" is not indexable  [index]
+tools/generate_itinerary.py:679: error: Value of type "object" is not indexable  [index]
+tools/generate_itinerary.py:680: error: Value of type "object" is not indexable  [index]
+tools/generate_itinerary.py:681: error: Value of type "object" is not indexable  [index]
+tools/generate_itinerary.py:682: error: Value of type "object" is not indexable  [index]
+tools/search_hotels.py:28: error: Returning Any from function declared to return "dict[Any, Any]"  [no-any-return]
+tools/search_flights.py:28: error: Returning Any from function declared to return "dict[Any, Any]"  [no-any-return]
+tools/search_flights.py:152: error: Incompatible default for argument "return_date" (default has type "None", argument has type "str")  [assignment]
+tools/search_flights.py:152: note: PEP 484 prohibits implicit Optional. Accordingly, mypy has changed its default to no_implicit_optional=True
+tools/search_flights.py:152: note: Use https://github.com/hauntsaninja/no_implicit_optional to automatically upgrade your codebase
+tools/search_cars.py:15: error: Function is missing a return type annotation  [no-untyped-def]
+tools/search_cars.py:22: error: Function is missing a type annotation  [no-untyped-def]
+tools/search_cars.py:39: error: Function is missing a type annotation  [no-untyped-def]
+services/hotel_service.py:46: error: Argument 1 of "search" is incompatible with supertype "ISearchService"; supertype defines the argument type as "SearchCriteria"  [override]
+services/hotel_service.py:46: note: This violates the Liskov substitution principle
+services/hotel_service.py:46: note: See https://mypy.readthedocs.io/en/stable/common_issues.html#incompatible-overrides
+services/hotel_service.py:179: error: Incompatible default for argument "nights" (default has type "None", argument has type "int")  [assignment]
+services/hotel_service.py:179: note: PEP 484 prohibits implicit Optional. Accordingly, mypy has changed its default to no_implicit_optional=True
+services/hotel_service.py:179: note: Use https://github.com/hauntsaninja/no_implicit_optional to automatically upgrade your codebase
+core/services.py:37: error: Returning Any from function declared to return "dict[str, Any]"  [no-any-return]
+core/services.py:72: error: Invalid index type "int" for "dict[str, Any]"; expected type "str"  [index]
+core/services.py:101: error: Returning Any from function declared to return "dict[str, Any]"  [no-any-return]
+core/registry.py:22: error: Function is missing a return type annotation  [no-untyped-def]
+core/registry.py:22: note: Use "-> None" if function does not return a value
+core/registry.py:112: error: Function is missing a return type annotation  [no-untyped-def]
+core/registry.py:112: note: Use "-> None" if function does not return a value
+server_solid.py:145: error: Argument "notification_options" to "get_capabilities" of "Server" has incompatible type "None"; expected "NotificationOptions"  [arg-type]
+server_solid.py:194: error: Function is missing a return type annotation  [no-untyped-def]
+server_solid.py:194: note: Use "-> None" if function does not return a value
+server.py:277: error: Argument "return_date" to "search_flights" has incompatible type "Any | None"; expected "str"  [arg-type]
+server.py:301: error: Argument "location" to "search_hotels" has incompatible type "Any | None"; expected "str"  [arg-type]
+server.py:302: error: Argument "arrival_date" to "search_hotels" has incompatible type "Any | None"; expected "str"  [arg-type]
+server.py:303: error: Argument "departure_date" to "search_hotels" has incompatible type "Any | None"; expected "str"  [arg-type]
+server.py:397: error: Function is missing a return type annotation  [no-untyped-def]
+server.py:397: note: Use "-> None" if function does not return a value
+server.py:407: error: Argument "tools" to "ServerCapabilities" has incompatible type "dict[Never, Never]"; expected "ToolsCapability | None"  [arg-type]
+server.py:407: error: Argument "resources" to "ServerCapabilities" has incompatible type "dict[Never, Never]"; expected "ResourcesCapability | None"  [arg-type]
+Found 33 errors in 10 files (checked 16 source files)

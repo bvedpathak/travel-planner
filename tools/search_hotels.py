@@ -4,11 +4,13 @@ Hotel search tool for the Travel Planner MCP Server.
 Integrates with Booking.com RapidAPI for live hotel data.
 """
 
-import aiohttp
-import yaml
 import os
 from datetime import datetime
-from typing import Dict, Any, Tuple
+from typing import Any, Dict, Tuple
+
+import aiohttp
+import yaml
+
 
 def load_config() -> dict:
     """
@@ -21,9 +23,10 @@ def load_config() -> dict:
         FileNotFoundError: If config.yaml is not found.
         yaml.YAMLError: If config.yaml is malformed.
     """
-    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.yaml')
-    with open(config_path, 'r') as file:
+    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.yaml")
+    with open(config_path, "r") as file:
         return yaml.safe_load(file)
+
 
 async def get_coordinates_from_city(city: str) -> Tuple[float, float]:
     """
@@ -45,15 +48,8 @@ async def get_coordinates_from_city(city: str) -> Tuple[float, float]:
         async with aiohttp.ClientSession() as session:
             # Use OpenStreetMap Nominatim API for geocoding (free, no API key required)
             url = "https://nominatim.openstreetmap.org/search"
-            params = {
-                "q": city,
-                "format": "json",
-                "limit": 1,
-                "addressdetails": 1
-            }
-            headers = {
-                "User-Agent": "TravelPlannerMCP/1.0"  # Required by Nominatim
-            }
+            params = {"q": city, "format": "json", "limit": 1, "addressdetails": 1}
+            headers = {"User-Agent": "TravelPlannerMCP/1.0"}  # Required by Nominatim
 
             async with session.get(url, params=params, headers=headers) as response:
                 if response.status == 200:
@@ -79,7 +75,7 @@ async def get_coordinates_from_city(city: str) -> Tuple[float, float]:
             "seattle": (47.6062, -122.3321),
             "denver": (39.7392, -104.9903),
             "atlanta": (33.7490, -84.3880),
-            "boston": (42.3601, -71.0589)
+            "boston": (42.3601, -71.0589),
         }
 
         city_lower = city.lower()
@@ -87,6 +83,7 @@ async def get_coordinates_from_city(city: str) -> Tuple[float, float]:
             return city_coords[city_lower]
         else:
             raise Exception(f"Failed to get coordinates for '{city}': {str(e)}")
+
 
 def format_hotel_response(hotel_data: dict) -> dict:
     """
@@ -157,7 +154,6 @@ def format_hotel_response(hotel_data: dict) -> dict:
         main_photo_url = hotel_data.get("main_photo_url", "")
 
         # Extract additional details
-        accommodation_type = hotel_data.get("accommodation_type", 0)
         hotel_class = hotel_data.get("class", 0)
 
         return {
@@ -165,10 +161,7 @@ def format_hotel_response(hotel_data: dict) -> dict:
             "hotelName": hotel_name,
             "location": city_in_trans.replace("in ", "") if city_in_trans else city,
             "city": city,
-            "coordinates": {
-                "latitude": latitude,
-                "longitude": longitude
-            },
+            "coordinates": {"latitude": latitude, "longitude": longitude},
             "rating": rating / 10 if rating > 10 else rating,  # Normalize to 5-point scale
             "ratingWord": review_score_word,
             "reviewCount": review_count,
@@ -178,30 +171,36 @@ def format_hotel_response(hotel_data: dict) -> dict:
                 "totalPrice": round(total_price, 2),
                 "currency": currency,
                 "netAmount": round(net_amount.get("value", 0), 2),
-                "priceDisplay": gross_per_night.get("amount_rounded", f"${price_per_night:.0f}")
+                "priceDisplay": gross_per_night.get("amount_rounded", f"${price_per_night:.0f}"),
             },
             "roomConfiguration": unit_config,
             "amenities": amenities,
-            "photos": {
-                "main": main_photo_url
-            },
+            "photos": {"main": main_photo_url},
             "policies": {
                 "checkIn": checkin_time,
                 "checkOut": checkout_time,
-                "cancellation": "Free cancellation" if hotel_data.get("is_free_cancellable", 0) else "Check hotel policy",
-                "prepayment": "No prepayment needed" if hotel_data.get("is_no_prepayment_block", 0) else "Prepayment required"
+                "cancellation": (
+                    "Free cancellation"
+                    if hotel_data.get("is_free_cancellable", 0)
+                    else "Check hotel policy"
+                ),
+                "prepayment": (
+                    "No prepayment needed"
+                    if hotel_data.get("is_no_prepayment_block", 0)
+                    else "Prepayment required"
+                ),
             },
             "features": {
                 "swimmingPool": bool(hotel_data.get("has_swimming_pool", 0)),
                 "freeCancellation": bool(hotel_data.get("is_free_cancellable", 0)),
                 "breakfastIncluded": bool(hotel_data.get("hotel_include_breakfast", 0)),
                 "geniusDeal": bool(hotel_data.get("is_genius_deal", 0)),
-                "smartDeal": bool(hotel_data.get("is_smart_deal", 0))
+                "smartDeal": bool(hotel_data.get("is_smart_deal", 0)),
             },
             "availability": {
                 "soldOut": bool(hotel_data.get("soldout", 0)),
-                "cantBook": hotel_data.get("cant_book") is not None
-            }
+                "cantBook": hotel_data.get("cant_book") is not None,
+            },
         }
     except Exception as e:
         # Return minimal hotel info if parsing fails
@@ -212,7 +211,7 @@ def format_hotel_response(hotel_data: dict) -> dict:
             "city": hotel_data.get("city", "Unknown"),
             "coordinates": {
                 "latitude": hotel_data.get("latitude", 0),
-                "longitude": hotel_data.get("longitude", 0)
+                "longitude": hotel_data.get("longitude", 0),
             },
             "rating": 0,
             "ratingWord": "",
@@ -223,7 +222,7 @@ def format_hotel_response(hotel_data: dict) -> dict:
                 "totalPrice": 0,
                 "currency": "USD",
                 "netAmount": 0,
-                "priceDisplay": "$0"
+                "priceDisplay": "$0",
             },
             "roomConfiguration": "Standard Room",
             "amenities": [],
@@ -232,21 +231,19 @@ def format_hotel_response(hotel_data: dict) -> dict:
                 "checkIn": "3:00 PM",
                 "checkOut": "11:00 AM",
                 "cancellation": "Check hotel policy",
-                "prepayment": "Check hotel policy"
+                "prepayment": "Check hotel policy",
             },
             "features": {
                 "swimmingPool": False,
                 "freeCancellation": False,
                 "breakfastIncluded": False,
                 "geniusDeal": False,
-                "smartDeal": False
+                "smartDeal": False,
             },
-            "availability": {
-                "soldOut": False,
-                "cantBook": False
-            },
-            "error": f"Failed to parse hotel data: {str(e)}"
+            "availability": {"soldOut": False, "cantBook": False},
+            "error": f"Failed to parse hotel data: {str(e)}",
         }
+
 
 async def search_hotels(
     location: str,
@@ -259,7 +256,7 @@ async def search_hotels(
     page_number: int = 1,
     temperature_unit: str = "c",
     languagecode: str = "en-us",
-    currency_code: str = "USD"
+    currency_code: str = "USD",
 ) -> Dict[str, Any]:
     """
     Search for hotels in a location using Booking.com RapidAPI.
@@ -308,14 +305,14 @@ async def search_hotels(
                 "arrival_date": arrival_date,
                 "departure_date": departure_date,
                 "adults": adults,
-                "room_qty": room_qty
-            }
+                "room_qty": room_qty,
+            },
         }
 
     # Load API configuration
     try:
         config = load_config()
-        api_config = config['hotel_api']['rapidapi']
+        api_config = config["hotel_api"]["rapidapi"]
     except Exception as e:
         return {"error": f"Failed to load API configuration: {str(e)}"}
 
@@ -332,17 +329,14 @@ async def search_hotels(
         "temperature_unit": temperature_unit,
         "languagecode": languagecode,
         "currency_code": currency_code,
-        "location": "US"  # Default location parameter required by API
+        "location": "US",  # Default location parameter required by API
     }
 
     # Add children ages if provided
     if children_age:
         params["children_age"] = children_age
 
-    headers = {
-        "X-RapidAPI-Host": api_config['host'],
-        "X-RapidAPI-Key": api_config['key']
-    }
+    headers = {"X-RapidAPI-Host": api_config["host"], "X-RapidAPI-Key": api_config["key"]}
 
     # Make API request
     try:
@@ -363,8 +357,8 @@ async def search_hotels(
                                 "arrival_date": arrival_date,
                                 "departure_date": departure_date,
                                 "adults": adults,
-                                "room_qty": room_qty
-                            }
+                                "room_qty": room_qty,
+                            },
                         }
 
                     # Extract hotel data from response
@@ -379,13 +373,13 @@ async def search_hotels(
                                 "arrival_date": arrival_date,
                                 "departure_date": departure_date,
                                 "adults": adults,
-                                "room_qty": room_qty
+                                "room_qty": room_qty,
                             },
                             "resultsFound": 0,
                             "hotels": [],
                             "message": "No hotels found for the specified criteria",
                             "searchTimestamp": datetime.now().isoformat(),
-                            "source": "Booking.com RapidAPI"
+                            "source": "Booking.com RapidAPI",
                         }
 
                     # Format hotel results
@@ -406,21 +400,59 @@ async def search_hotels(
                             "nights": nights,
                             "adults": adults,
                             "room_qty": room_qty,
-                            "currency_code": currency_code
+                            "currency_code": currency_code,
                         },
                         "resultsFound": len(hotels_list),
                         "resultsDisplayed": len(formatted_hotels),
                         "summary": {
                             "totalHotels": len(hotels_list),
                             "hotelsDisplayed": len(formatted_hotels),
-                            "averagePricePerNight": round(sum(h["pricing"]["pricePerNight"] for h in formatted_hotels if h["pricing"]["pricePerNight"] > 0) / max(len([h for h in formatted_hotels if h["pricing"]["pricePerNight"] > 0]), 1), 2) if formatted_hotels else 0,
-                            "priceRangePerNight": f"{min(h['pricing']['pricePerNight'] for h in formatted_hotels if h['pricing']['pricePerNight'] > 0):.2f} - {max(h['pricing']['pricePerNight'] for h in formatted_hotels if h['pricing']['pricePerNight'] > 0):.2f} {currency_code}" if formatted_hotels and any(h["pricing"]["pricePerNight"] > 0 for h in formatted_hotels) else "N/A",
-                            "averageRating": round(sum(h["rating"] for h in formatted_hotels if h["rating"] > 0) / max(len([h for h in formatted_hotels if h["rating"] > 0]), 1), 1) if formatted_hotels else 0,
-                            "hotelClasses": list(set(h["hotelClass"] for h in formatted_hotels if h["hotelClass"] > 0))
+                            "averagePricePerNight": (
+                                round(
+                                    sum(
+                                        h["pricing"]["pricePerNight"]
+                                        for h in formatted_hotels
+                                        if h["pricing"]["pricePerNight"] > 0
+                                    )
+                                    / max(
+                                        len(
+                                            [
+                                                h
+                                                for h in formatted_hotels
+                                                if h["pricing"]["pricePerNight"] > 0
+                                            ]
+                                        ),
+                                        1,
+                                    ),
+                                    2,
+                                )
+                                if formatted_hotels
+                                else 0
+                            ),
+                            "priceRangePerNight": (
+                                f"{min(h['pricing']['pricePerNight'] for h in formatted_hotels if h['pricing']['pricePerNight'] > 0):.2f} - {max(h['pricing']['pricePerNight'] for h in formatted_hotels if h['pricing']['pricePerNight'] > 0):.2f} {currency_code}"
+                                if formatted_hotels
+                                and any(h["pricing"]["pricePerNight"] > 0 for h in formatted_hotels)
+                                else "N/A"
+                            ),
+                            "averageRating": (
+                                round(
+                                    sum(h["rating"] for h in formatted_hotels if h["rating"] > 0)
+                                    / max(len([h for h in formatted_hotels if h["rating"] > 0]), 1),
+                                    1,
+                                )
+                                if formatted_hotels
+                                else 0
+                            ),
+                            "hotelClasses": list(
+                                set(
+                                    h["hotelClass"] for h in formatted_hotels if h["hotelClass"] > 0
+                                )
+                            ),
                         },
                         "hotels": formatted_hotels,
                         "searchTimestamp": datetime.now().isoformat(),
-                        "source": "Booking.com RapidAPI"
+                        "source": "Booking.com RapidAPI",
                     }
                 else:
                     error_text = await response.text()
@@ -430,8 +462,8 @@ async def search_hotels(
                         "searchCriteria": {
                             "location": location,
                             "arrival_date": arrival_date,
-                            "departure_date": departure_date
-                        }
+                            "departure_date": departure_date,
+                        },
                     }
     except Exception as e:
         return {
@@ -441,6 +473,6 @@ async def search_hotels(
                 "arrival_date": arrival_date,
                 "departure_date": departure_date,
                 "adults": adults,
-                "room_qty": room_qty
-            }
+                "room_qty": room_qty,
+            },
         }

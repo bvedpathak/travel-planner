@@ -1,0 +1,291 @@
+************* Module core.interfaces
+core/interfaces.py:12:0: R0402: Use 'from mcp import types' instead (consider-using-from-import)
+core/interfaces.py:19:4: W0107: Unnecessary pass statement (unnecessary-pass)
+core/interfaces.py:40:8: W0107: Unnecessary pass statement (unnecessary-pass)
+core/interfaces.py:49:8: W0107: Unnecessary pass statement (unnecessary-pass)
+core/interfaces.py:60:8: W0107: Unnecessary pass statement (unnecessary-pass)
+core/interfaces.py:69:8: W0107: Unnecessary pass statement (unnecessary-pass)
+core/interfaces.py:78:8: W0107: Unnecessary pass statement (unnecessary-pass)
+core/interfaces.py:87:8: W0107: Unnecessary pass statement (unnecessary-pass)
+core/interfaces.py:92:8: W0107: Unnecessary pass statement (unnecessary-pass)
+core/interfaces.py:97:8: W0107: Unnecessary pass statement (unnecessary-pass)
+core/interfaces.py:106:8: W0107: Unnecessary pass statement (unnecessary-pass)
+core/interfaces.py:111:8: W0107: Unnecessary pass statement (unnecessary-pass)
+core/interfaces.py:116:8: W0107: Unnecessary pass statement (unnecessary-pass)
+core/interfaces.py:125:8: W0107: Unnecessary pass statement (unnecessary-pass)
+core/interfaces.py:134:8: W0107: Unnecessary pass statement (unnecessary-pass)
+************* Module core.services
+core/services.py:36:17: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+core/services.py:39:12: W0707: Consider explicitly re-raising using 'except FileNotFoundError as exc' and 'raise FileNotFoundError(f'Configuration file not found: {self.config_path}') from exc' (raise-missing-from)
+core/services.py:41:12: W0707: Consider explicitly re-raising using 'raise ValueError(f'Invalid YAML configuration: {str(e)}') from e' (raise-missing-from)
+core/services.py:79:15: W0718: Catching too general exception Exception (broad-exception-caught)
+core/services.py:71:12: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+core/services.py:85:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+core/services.py:100:16: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+core/services.py:104:20: W0719: Raising too general exception: Exception (broad-exception-raised)
+core/services.py:173:15: W0718: Catching too general exception Exception (broad-exception-caught)
+core/services.py:234:12: W0621: Redefining name 'datetime' from outer scope (line 9) (redefined-outer-name)
+core/services.py:234:12: W0404: Reimport 'datetime' (imported line 9) (reimported)
+core/services.py:234:12: C0415: Import outside toplevel (datetime.datetime, datetime.timedelta) (import-outside-toplevel)
+core/services.py:280:15: W0718: Catching too general exception Exception (broad-exception-caught)
+************* Module services.hotel_service
+services/hotel_service.py:31:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+services/hotel_service.py:170:15: W0718: Catching too general exception Exception (broad-exception-caught)
+services/hotel_service.py:71:19: W0718: Catching too general exception Exception (broad-exception-caught)
+services/hotel_service.py:83:19: W0718: Catching too general exception Exception (broad-exception-caught)
+services/hotel_service.py:46:4: R0911: Too many return statements (7/6) (too-many-return-statements)
+services/hotel_service.py:203:8: W0702: No exception type(s) specified (bare-except)
+************* Module tools.search_cars
+tools/search_cars.py:176:0: C0301: Line too long (103/100) (line-too-long)
+tools/search_cars.py:177:0: C0301: Line too long (106/100) (line-too-long)
+tools/search_cars.py:202:0: C0301: Line too long (103/100) (line-too-long)
+tools/search_cars.py:203:0: C0301: Line too long (106/100) (line-too-long)
+tools/search_cars.py:224:0: C0301: Line too long (102/100) (line-too-long)
+tools/search_cars.py:18:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+tools/search_cars.py:27:4: R1705: Unnecessary "elif" after "return", remove the leading "el" from "elif" (no-else-return)
+tools/search_cars.py:94:11: W0718: Catching too general exception Exception (broad-exception-caught)
+tools/search_cars.py:99:0: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
+tools/search_cars.py:143:11: W0718: Catching too general exception Exception (broad-exception-caught)
+tools/search_cars.py:248:11: W0718: Catching too general exception Exception (broad-exception-caught)
+tools/search_cars.py:168:16: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+tools/search_cars.py:99:0: R0911: Too many return statements (7/6) (too-many-return-statements)
+************* Module tools.search_trains
+tools/search_trains.py:144:0: C0301: Line too long (103/100) (line-too-long)
+tools/search_trains.py:256:0: C0301: Line too long (107/100) (line-too-long)
+tools/search_trains.py:261:0: C0301: Line too long (115/100) (line-too-long)
+tools/search_trains.py:138:28: C0201: Consider iterating the dictionary directly instead of calling .keys() (consider-iterating-dictionary)
+tools/search_trains.py:159:8: W0612: Unused variable 'i' (unused-variable)
+************* Module tools.search_hotels
+tools/search_hotels.py:433:0: C0301: Line too long (260/100) (line-too-long)
+tools/search_hotels.py:27:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+tools/search_hotels.py:66:11: W0718: Catching too general exception Exception (broad-exception-caught)
+tools/search_hotels.py:57:20: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+tools/search_hotels.py:63:24: W0719: Raising too general exception: Exception (broad-exception-raised)
+tools/search_hotels.py:65:20: W0719: Raising too general exception: Exception (broad-exception-raised)
+tools/search_hotels.py:82:8: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+tools/search_hotels.py:85:12: W0707: Consider explicitly re-raising using 'raise Exception(f"Failed to get coordinates for '{city}': {str(e)}") from e' (raise-missing-from)
+tools/search_hotels.py:85:12: W0719: Raising too general exception: Exception (broad-exception-raised)
+tools/search_hotels.py:205:11: W0718: Catching too general exception Exception (broad-exception-caught)
+tools/search_hotels.py:248:0: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
+tools/search_hotels.py:300:11: W0718: Catching too general exception Exception (broad-exception-caught)
+tools/search_hotels.py:316:11: W0718: Catching too general exception Exception (broad-exception-caught)
+tools/search_hotels.py:468:11: W0718: Catching too general exception Exception (broad-exception-caught)
+tools/search_hotels.py:346:16: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+tools/search_hotels.py:248:0: R0911: Too many return statements (10/6) (too-many-return-statements)
+************* Module tools.search_flights
+tools/search_flights.py:85:0: C0301: Line too long (105/100) (line-too-long)
+tools/search_flights.py:122:0: C0301: Line too long (125/100) (line-too-long)
+tools/search_flights.py:170:0: C0301: Line too long (105/100) (line-too-long)
+tools/search_flights.py:264:0: C0301: Line too long (148/100) (line-too-long)
+tools/search_flights.py:27:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+tools/search_flights.py:142:11: W0718: Catching too general exception Exception (broad-exception-caught)
+tools/search_flights.py:148:0: R0917: Too many positional arguments (9/5) (too-many-positional-arguments)
+tools/search_flights.py:189:11: W0718: Catching too general exception Exception (broad-exception-caught)
+tools/search_flights.py:285:11: W0718: Catching too general exception Exception (broad-exception-caught)
+tools/search_flights.py:216:16: R1705: Unnecessary "else" after "return", remove the "else" and de-indent the code inside it (no-else-return)
+************* Module tools.generate_itinerary
+tools/generate_itinerary.py:694:0: C0301: Line too long (121/100) (line-too-long)
+tools/generate_itinerary.py:710:12: R1724: Unnecessary "elif" after "continue", remove the leading "el" from "elif" (no-else-continue)
+tools/generate_itinerary.py:714:16: C0415: Import outside toplevel (re) (import-outside-toplevel)
+************* Module tools_solid.hotel_tool
+tools_solid/hotel_tool.py:60:0: C0301: Line too long (109/100) (line-too-long)
+tools_solid/hotel_tool.py:102:0: C0301: Line too long (102/100) (line-too-long)
+tools_solid/hotel_tool.py:106:0: C0301: Line too long (107/100) (line-too-long)
+tools_solid/hotel_tool.py:12:0: R0402: Use 'from mcp import types' instead (consider-using-from-import)
+tools_solid/hotel_tool.py:165:15: W0718: Catching too general exception Exception (broad-exception-caught)
+************* Module server
+server.py:113:0: C0301: Line too long (109/100) (line-too-long)
+server.py:255:0: C0301: Line too long (104/100) (line-too-long)
+server.py:25:0: R0402: Use 'from mcp import types' instead (consider-using-from-import)
+server.py:342:11: W0718: Catching too general exception Exception (broad-exception-caught)
+server.py:292:16: C0415: Import outside toplevel (datetime.datetime, datetime.timedelta) (import-outside-toplevel)
+server.py:343:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+server.py:388:13: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+server.py:392:8: W0707: Consider explicitly re-raising using 'except FileNotFoundError as exc' and 'raise ValueError(f'Resource not found: {uri}') from exc' (raise-missing-from)
+server.py:394:8: W0707: Consider explicitly re-raising using 'raise ValueError(f'Error reading resource: {str(e)}') from e' (raise-missing-from)
+************* Module server_solid
+server_solid.py:19:0: R0402: Use 'from mcp import types' instead (consider-using-from-import)
+server_solid.py:114:19: W0718: Catching too general exception Exception (broad-exception-caught)
+server_solid.py:115:16: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+server_solid.py:207:8: W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+
+
+Report
+======
+865 statements analysed.
+
+Statistics by type
+------------------
+
++---------+-------+-----------+-----------+------------+---------+
+|type     |number |old number |difference |%documented |%badname |
++=========+=======+===========+===========+============+=========+
+|module   |16     |16         |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|class    |26     |26         |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|method   |51     |51         |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+|function |31     |31         |=          |100.00      |0.00     |
++---------+-------+-----------+-----------+------------+---------+
+
+
+
+External dependencies
+---------------------
+::
+
+    aiohttp (core.services,tools.search_cars,tools.search_flights,tools.search_hotels)
+    core 
+      \-interfaces (server_solid,services.hotel_service,tools_solid.hotel_tool)
+      \-registry (server_solid)
+      \-services (server_solid)
+    mcp 
+      \-server (server,server_solid)
+      | \-models (server,server_solid)
+      | \-stdio (server,server_solid)
+      \-types (core.interfaces,server,server_solid,tools_solid.hotel_tool)
+    pydantic (server,server_solid)
+    services 
+      \-hotel_service (server_solid)
+    tools 
+      \-generate_itinerary (server)
+      \-search_cars (server)
+      \-search_flights (server)
+      \-search_hotels (server)
+      \-search_trains (server)
+    tools_solid 
+      \-hotel_tool (server_solid)
+    yaml (core.services,tools.search_cars,tools.search_flights,tools.search_hotels)
+
+
+
+3805 lines have been analyzed
+
+Raw metrics
+-----------
+
++----------+-------+------+---------+-----------+
+|type      |number |%     |previous |difference |
++==========+=======+======+=========+===========+
+|code      |1646   |43.26 |1652     |-6.00      |
++----------+-------+------+---------+-----------+
+|docstring |1642   |43.15 |1642     |=          |
++----------+-------+------+---------+-----------+
+|comment   |131    |3.44  |131      |=          |
++----------+-------+------+---------+-----------+
+|empty     |386    |10.14 |386      |=          |
++----------+-------+------+---------+-----------+
+
+
+
+Duplication
+-----------
+
++-------------------------+------+---------+-----------+
+|                         |now   |previous |difference |
++=========================+======+=========+===========+
+|nb duplicated lines      |0     |0        |0          |
++-------------------------+------+---------+-----------+
+|percent duplicated lines |0.000 |0.000    |=          |
++-------------------------+------+---------+-----------+
+
+
+
+Messages by category
+--------------------
+
++-----------+-------+---------+-----------+
+|type       |number |previous |difference |
++===========+=======+=========+===========+
+|convention |23     |23       |23         |
++-----------+-------+---------+-----------+
+|refactor   |21     |21       |21         |
++-----------+-------+---------+-----------+
+|warning    |55     |63       |63         |
++-----------+-------+---------+-----------+
+|error      |0      |0        |0          |
++-----------+-------+---------+-----------+
+
+
+
+% errors / warnings by module
+-----------------------------
+
++-------------------------+------+--------+---------+-----------+
+|module                   |error |warning |refactor |convention |
++=========================+======+========+=========+===========+
+|core.interfaces          |0.00  |25.45   |4.76     |0.00       |
++-------------------------+------+--------+---------+-----------+
+|tools.search_hotels      |0.00  |18.18   |23.81    |4.35       |
++-------------------------+------+--------+---------+-----------+
+|core.services            |0.00  |16.36   |14.29    |4.35       |
++-------------------------+------+--------+---------+-----------+
+|server                   |0.00  |9.09    |4.76     |13.04      |
++-------------------------+------+--------+---------+-----------+
+|tools.search_cars        |0.00  |7.27    |19.05    |21.74      |
++-------------------------+------+--------+---------+-----------+
+|tools.search_flights     |0.00  |7.27    |9.52     |17.39      |
++-------------------------+------+--------+---------+-----------+
+|services.hotel_service   |0.00  |7.27    |9.52     |0.00       |
++-------------------------+------+--------+---------+-----------+
+|server_solid             |0.00  |5.45    |4.76     |0.00       |
++-------------------------+------+--------+---------+-----------+
+|tools_solid.hotel_tool   |0.00  |1.82    |4.76     |13.04      |
++-------------------------+------+--------+---------+-----------+
+|tools.search_trains      |0.00  |1.82    |0.00     |17.39      |
++-------------------------+------+--------+---------+-----------+
+|tools.generate_itinerary |0.00  |0.00    |4.76     |8.70       |
++-------------------------+------+--------+---------+-----------+
+
+
+
+Messages
+--------
+
++------------------------------+------------+
+|message id                    |occurrences |
++==============================+============+
+|broad-exception-caught        |20          |
++------------------------------+------------+
+|line-too-long                 |19          |
++------------------------------+------------+
+|unnecessary-pass              |14          |
++------------------------------+------------+
+|no-else-return                |9           |
++------------------------------+------------+
+|unspecified-encoding          |5           |
++------------------------------+------------+
+|raise-missing-from            |5           |
++------------------------------+------------+
+|too-many-positional-arguments |4           |
++------------------------------+------------+
+|consider-using-from-import    |4           |
++------------------------------+------------+
+|broad-exception-raised        |4           |
++------------------------------+------------+
+|too-many-return-statements    |3           |
++------------------------------+------------+
+|logging-fstring-interpolation |3           |
++------------------------------+------------+
+|import-outside-toplevel       |3           |
++------------------------------+------------+
+|unused-variable               |1           |
++------------------------------+------------+
+|reimported                    |1           |
++------------------------------+------------+
+|redefined-outer-name          |1           |
++------------------------------+------------+
+|no-else-continue              |1           |
++------------------------------+------------+
+|consider-iterating-dictionary |1           |
++------------------------------+------------+
+|bare-except                   |1           |
++------------------------------+------------+
+
+
+
+
+------------------------------------------------------------------
+Your code has been rated at 8.86/10 (previous run: 8.77/10, +0.08)
+

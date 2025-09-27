@@ -6,13 +6,19 @@ following Single Responsibility Principle and Dependency Inversion Principle.
 """
 
 import os
-import yaml
-import aiohttp
 from datetime import datetime
-from typing import Dict, Any, Tuple, Optional
+from typing import Any, Dict, Optional, Tuple
+
+import aiohttp
+import yaml
+
 from core.interfaces import (
-    IConfigurationLoader, IGeocoder, IApiClient, IDataFormatter,
-    IParameterMapper, IValidator
+    IApiClient,
+    IConfigurationLoader,
+    IDataFormatter,
+    IGeocoder,
+    IParameterMapper,
+    IValidator,
 )
 
 
@@ -21,13 +27,13 @@ class YamlConfigurationLoader(IConfigurationLoader):
 
     def __init__(self, config_path: Optional[str] = None):
         self.config_path = config_path or os.path.join(
-            os.path.dirname(os.path.dirname(__file__)), 'config.yaml'
+            os.path.dirname(os.path.dirname(__file__)), "config.yaml"
         )
 
     def load_config(self) -> Dict[str, Any]:
         """Load configuration from YAML file."""
         try:
-            with open(self.config_path, 'r') as file:
+            with open(self.config_path, "r") as file:
                 return yaml.safe_load(file)
         except FileNotFoundError:
             raise FileNotFoundError(f"Configuration file not found: {self.config_path}")
@@ -50,22 +56,15 @@ class NominatimGeocoder(IGeocoder):
             "seattle": (47.6062, -122.3321),
             "denver": (39.7392, -104.9903),
             "atlanta": (33.7490, -84.3880),
-            "boston": (42.3601, -71.0589)
+            "boston": (42.3601, -71.0589),
         }
 
     async def get_coordinates(self, location: str) -> Tuple[float, float]:
         """Get coordinates for a location using Nominatim API with fallback."""
         try:
             url = "https://nominatim.openstreetmap.org/search"
-            params = {
-                "q": location,
-                "format": "json",
-                "limit": 1,
-                "addressdetails": 1
-            }
-            headers = {
-                "User-Agent": "TravelPlannerMCP/1.0"
-            }
+            params = {"q": location, "format": "json", "limit": 1, "addressdetails": 1}
+            headers = {"User-Agent": "TravelPlannerMCP/1.0"}
 
             response = await self.api_client.make_request(url, params, headers)
 
@@ -92,7 +91,9 @@ class NominatimGeocoder(IGeocoder):
 class HttpApiClient(IApiClient):
     """HTTP API client implementation."""
 
-    async def make_request(self, url: str, params: Dict[str, Any], headers: Dict[str, Any]) -> Dict[str, Any]:
+    async def make_request(
+        self, url: str, params: Dict[str, Any], headers: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Make an HTTP GET request."""
         async with aiohttp.ClientSession() as session:
             async with session.get(url, params=params, headers=headers) as response:
@@ -100,7 +101,9 @@ class HttpApiClient(IApiClient):
                     return await response.json()
                 else:
                     error_text = await response.text()
-                    raise Exception(f"API request failed with status {response.status}: {error_text}")
+                    raise Exception(
+                        f"API request failed with status {response.status}: {error_text}"
+                    )
 
 
 class HotelResponseFormatter(IDataFormatter):
@@ -143,10 +146,7 @@ class HotelResponseFormatter(IDataFormatter):
                 "hotelName": hotel_name,
                 "location": city_in_trans.replace("in ", "") if city_in_trans else city,
                 "city": city,
-                "coordinates": {
-                    "latitude": latitude,
-                    "longitude": longitude
-                },
+                "coordinates": {"latitude": latitude, "longitude": longitude},
                 "rating": rating / 10 if rating > 10 else rating,
                 "ratingWord": review_score_word,
                 "reviewCount": review_count,
@@ -156,25 +156,25 @@ class HotelResponseFormatter(IDataFormatter):
                     "totalPrice": round(total_price, 2),
                     "currency": currency,
                     "netAmount": round(net_amount.get("value", 0), 2),
-                    "priceDisplay": gross_per_night.get("amount_rounded", f"${price_per_night:.0f}")
+                    "priceDisplay": gross_per_night.get(
+                        "amount_rounded", f"${price_per_night:.0f}"
+                    ),
                 },
                 "roomConfiguration": raw_data.get("unit_configuration_label", "Standard Room"),
                 "amenities": self._extract_amenities(raw_data),
-                "photos": {
-                    "main": raw_data.get("main_photo_url", "")
-                },
+                "photos": {"main": raw_data.get("main_photo_url", "")},
                 "policies": self._extract_policies(raw_data),
                 "features": self._extract_features(raw_data),
                 "availability": {
                     "soldOut": bool(raw_data.get("soldout", 0)),
-                    "cantBook": raw_data.get("cant_book") is not None
-                }
+                    "cantBook": raw_data.get("cant_book") is not None,
+                },
             }
         except Exception as e:
             return {
                 "hotelId": raw_data.get("hotel_id", 0),
                 "hotelName": raw_data.get("hotel_name", "Unknown Hotel"),
-                "error": f"Failed to format hotel data: {str(e)}"
+                "error": f"Failed to format hotel data: {str(e)}",
             }
 
     def _extract_amenities(self, raw_data: Dict[str, Any]) -> list:
@@ -196,8 +196,16 @@ class HotelResponseFormatter(IDataFormatter):
         return {
             "checkIn": checkin_info.get("from", "3:00 PM") if checkin_info else "3:00 PM",
             "checkOut": checkout_info.get("until", "11:00 AM") if checkout_info else "11:00 AM",
-            "cancellation": "Free cancellation" if raw_data.get("is_free_cancellable", 0) else "Check hotel policy",
-            "prepayment": "No prepayment needed" if raw_data.get("is_no_prepayment_block", 0) else "Prepayment required"
+            "cancellation": (
+                "Free cancellation"
+                if raw_data.get("is_free_cancellable", 0)
+                else "Check hotel policy"
+            ),
+            "prepayment": (
+                "No prepayment needed"
+                if raw_data.get("is_no_prepayment_block", 0)
+                else "Prepayment required"
+            ),
         }
 
     def _extract_features(self, raw_data: Dict[str, Any]) -> Dict[str, bool]:
@@ -207,7 +215,7 @@ class HotelResponseFormatter(IDataFormatter):
             "freeCancellation": bool(raw_data.get("is_free_cancellable", 0)),
             "breakfastIncluded": bool(raw_data.get("hotel_include_breakfast", 0)),
             "geniusDeal": bool(raw_data.get("is_genius_deal", 0)),
-            "smartDeal": bool(raw_data.get("is_smart_deal", 0))
+            "smartDeal": bool(raw_data.get("is_smart_deal", 0)),
         }
 
 
@@ -224,6 +232,7 @@ class HotelParameterMapper(IParameterMapper):
         # If using old format with nights, calculate departure_date
         if not departure_date and arguments.get("nights") and arrival_date:
             from datetime import datetime, timedelta
+
             arrival_dt = datetime.strptime(arrival_date, "%Y-%m-%d")
             departure_dt = arrival_dt + timedelta(days=int(arguments["nights"]))
             departure_date = departure_dt.strftime("%Y-%m-%d")
@@ -238,7 +247,7 @@ class HotelParameterMapper(IParameterMapper):
             "children_age": arguments.get("children_age", ""),
             "room_qty": arguments.get("room_qty", 1),
             "currency_code": arguments.get("currency_code", "USD"),
-            "languagecode": arguments.get("languagecode", "en-us")
+            "languagecode": arguments.get("languagecode", "en-us"),
         }
 
 

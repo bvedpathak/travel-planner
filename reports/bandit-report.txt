@@ -1,0 +1,169 @@
+Run started:2025-09-27 13:25:58.080532
+
+Test results:
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b311-random
+   Location: tools/generate_itinerary.py:537:33
+536	        if filtered_attractions:
+537	            morning_attraction = random.choice(filtered_attractions)
+538	            filtered_attractions.remove(morning_attraction)  # Don't repeat
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b311-random
+   Location: tools/generate_itinerary.py:551:25
+550	        # Add breakfast
+551	        breakfast_spot = random.choice(
+552	            [
+553	                r
+554	                for r in filtered_restaurants
+555	                if r.get("cuisine") in ["Breakfast", "Bakery", "American"]
+556	            ]
+557	        )
+558	        if not breakfast_spot:
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b311-random
+   Location: tools/generate_itinerary.py:559:29
+558	        if not breakfast_spot:
+559	            breakfast_spot = random.choice(filtered_restaurants[:3])  # Fallback to any restaurant
+560	
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b311-random
+   Location: tools/generate_itinerary.py:576:25
+575	        if lunch_options:
+576	            lunch_spot = random.choice(lunch_options)
+577	            afternoon_activities.append(
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b311-random
+   Location: tools/generate_itinerary.py:590:33
+589	        if filtered_activities:
+590	            afternoon_activity = random.choice(filtered_activities)
+591	            filtered_activities.remove(afternoon_activity)
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b311-random
+   Location: tools/generate_itinerary.py:603:35
+602	        elif filtered_attractions:
+603	            afternoon_attraction = random.choice(filtered_attractions)
+604	            filtered_attractions.remove(afternoon_attraction)
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b311-random
+   Location: tools/generate_itinerary.py:620:26
+619	        if dinner_options:
+620	            dinner_spot = random.choice(dinner_options)
+621	            evening_activities.append(
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b311-random
+   Location: tools/generate_itinerary.py:640:31
+639	            if nightlife_options:
+640	                evening_spot = random.choice(nightlife_options)
+641	                evening_activities.append(
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b311-random
+   Location: tools/search_trains.py:157:17
+156	    trains = []
+157	    num_trains = random.randint(3, 8)  # Multiple trains per day
+158	
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b311-random
+   Location: tools/search_trains.py:161:25
+160	        # Generate departure times throughout the day
+161	        departure_hour = random.randint(6, 20)
+162	        departure_minute = random.choice([0, 15, 30, 45])
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b311-random
+   Location: tools/search_trains.py:162:27
+161	        departure_hour = random.randint(6, 20)
+162	        departure_minute = random.choice([0, 15, 30, 45])
+163	        departure_time = f"{departure_hour:02d}:{departure_minute:02d}"
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b311-random
+   Location: tools/search_trains.py:167:20
+166	        base_duration = route_info["base_duration"]
+167	        variation = random.randint(-15, 30)  # Add some schedule variation
+168	        actual_duration = base_duration + variation
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b311-random
+   Location: tools/search_trains.py:181:73
+180	        # Generate train number
+181	        train_number = f"{route_info['operator'].split()[0][:2].upper()}{random.randint(100, 999)}"
+182	
+
+--------------------------------------------------
+>> Issue: [B311:blacklist] Standard pseudo-random generators are not suitable for security/cryptographic purposes.
+   Severity: Low   Confidence: High
+   CWE: CWE-330 (https://cwe.mitre.org/data/definitions/330.html)
+   More Info: https://bandit.readthedocs.io/en/1.8.6/blacklists/blacklist_calls.html#b311-random
+   Location: tools/search_trains.py:200:36
+199	                    "amenities": train_class["amenities"],
+200	                    "availability": random.choice(
+201	                        ["Available", "Available", "Available", "Limited", "Sold Out"]
+202	                    ),
+203	                }
+
+--------------------------------------------------
+
+Code scanned:
+	Total lines of code: 3186
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 14
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 14
+Files skipped (0):

@@ -4,17 +4,20 @@ Car rental search tool for the Travel Planner MCP Server.
 Integrates with Booking.com RapidAPI for live car rental data.
 """
 
-import aiohttp
-import yaml
 import os
 from datetime import datetime
-from typing import Dict, Any, Optional
+from typing import Any, Dict
+
+import aiohttp
+import yaml
+
 
 def load_config():
     """Load API configuration from config.yaml"""
-    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.yaml')
-    with open(config_path, 'r') as file:
+    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.yaml")
+    with open(config_path, "r") as file:
         return yaml.safe_load(file)
+
 
 def format_price(price_obj):
     """Format price object to readable string"""
@@ -31,6 +34,7 @@ def format_price(price_obj):
         return f"USD {price_obj:.2f}"
     else:
         return str(price_obj)
+
 
 def parse_car_rental(rental):
     """Parse a car rental from the API response into simplified format"""
@@ -62,32 +66,35 @@ def parse_car_rental(rental):
                 "breakdown": {
                     "base": format_price(pricing.get("base_price")),
                     "taxes": format_price(pricing.get("taxes")),
-                    "fees": format_price(pricing.get("fees"))
-                }
+                    "fees": format_price(pricing.get("fees")),
+                },
             },
             "specifications": {
                 "passengers": vehicle_info.get("passengers", vehicle.get("seats", "N/A")),
                 "doors": vehicle_info.get("doors", vehicle.get("doors", "N/A")),
                 "transmission": vehicle_info.get("transmission", "N/A"),
                 "fuelType": vehicle_info.get("fuel_type", vehicle.get("fuel", "N/A")),
-                "airConditioning": vehicle_info.get("air_conditioning", vehicle.get("airConditioning", False)),
-                "category": vehicle_info.get("category", "N/A")
+                "airConditioning": vehicle_info.get(
+                    "air_conditioning", vehicle.get("airConditioning", False)
+                ),
+                "category": vehicle_info.get("category", "N/A"),
             },
             "policies": {
                 "mileage": rental.get("mileage_policy", "Check with supplier"),
                 "fuelPolicy": rental.get("fuel_policy", "Check with supplier"),
                 "cancellation": rental.get("cancellation_policy", "Check with supplier"),
-                "minimumAge": rental.get("minimum_age", 21)
+                "minimumAge": rental.get("minimum_age", 21),
             },
             "supplier": vendor,
             "bookingToken": rental.get("booking_token", rental.get("id")),
             "features": rental.get("features", []),
             "insurance": rental.get("insurance", {}),
-            "rating": vendor.get("rating", "N/A")
+            "rating": vendor.get("rating", "N/A"),
         }
     except Exception as e:
         print(f"Error parsing car rental: {e}")
         return None
+
 
 async def search_cars(
     pick_up_latitude: float,
@@ -100,7 +107,7 @@ async def search_cars(
     drop_off_time: str = "10:00",
     driver_age: int = 30,
     currency_code: str = "USD",
-    location: str = "US"
+    location: str = "US",
 ) -> Dict[str, Any]:
     """
     Search for rental cars using Booking.com RapidAPI.
@@ -132,7 +139,7 @@ async def search_cars(
     # Load API configuration
     try:
         config = load_config()
-        api_config = config['car_api']['rapidapi']
+        api_config = config["car_api"]["rapidapi"]
     except Exception as e:
         return {"error": f"Failed to load API configuration: {str(e)}"}
 
@@ -148,13 +155,10 @@ async def search_cars(
         "drop_off_time": drop_off_time,
         "driver_age": str(driver_age),
         "currency_code": currency_code,
-        "location": location
+        "location": location,
     }
 
-    headers = {
-        "X-RapidAPI-Host": api_config['host'],
-        "X-RapidAPI-Key": api_config['key']
-    }
+    headers = {"X-RapidAPI-Host": api_config["host"], "X-RapidAPI-Key": api_config["key"]}
 
     # Make API request
     try:
@@ -174,8 +178,8 @@ async def search_cars(
                                 "pickupDate": pick_up_date,
                                 "dropoffDate": drop_off_date,
                                 "driverAge": driver_age,
-                                "currency": currency_code
-                            }
+                                "currency": currency_code,
+                            },
                         }
 
                     # Transform successful response to user-friendly format
@@ -203,7 +207,7 @@ async def search_cars(
                                 "dropoffTime": drop_off_time,
                                 "driverAge": driver_age,
                                 "currency": currency_code,
-                                "location": location
+                                "location": location,
                             },
                             "resultsFound": 0,
                             "resultsDisplayed": 0,
@@ -211,7 +215,7 @@ async def search_cars(
                             "message": "No car rentals available for the specified criteria",
                             "provider": provider,
                             "searchTimestamp": datetime.now().isoformat(),
-                            "source": "Booking.com RapidAPI"
+                            "source": "Booking.com RapidAPI",
                         }
 
                     return {
@@ -224,7 +228,7 @@ async def search_cars(
                             "dropoffTime": drop_off_time,
                             "driverAge": driver_age,
                             "currency": currency_code,
-                            "location": location
+                            "location": location,
                         },
                         "resultsFound": count,
                         "resultsDisplayed": len(cars),
@@ -233,13 +237,13 @@ async def search_cars(
                         "availableFilters": data_section.get("filter", []),
                         "sortOptions": data_section.get("sort", []),
                         "searchTimestamp": datetime.now().isoformat(),
-                        "source": "Booking.com RapidAPI"
+                        "source": "Booking.com RapidAPI",
                     }
                 else:
                     error_text = await response.text()
                     return {
                         "error": f"API request failed with status {response.status}",
-                        "details": error_text
+                        "details": error_text,
                     }
     except Exception as e:
         return {
@@ -248,7 +252,6 @@ async def search_cars(
                 "pickupLocation": f"Lat: {pick_up_latitude}, Lng: {pick_up_longitude}",
                 "dropoffLocation": f"Lat: {drop_off_latitude}, Lng: {drop_off_longitude}",
                 "pickupDate": pick_up_date,
-                "dropoffDate": drop_off_date
-            }
+                "dropoffDate": drop_off_date,
+            },
         }
-

@@ -1,0 +1,6 @@
+services/hotel_service.py:46:5: C901 'HotelSearchService.search' is too complex (13)
+services/hotel_service.py:203:9: E722 do not use bare 'except'
+tools/generate_itinerary.py:485:1: C901 'generate_itinerary' is too complex (13)
+tools/search_cars.py:99:1: C901 'search_cars' is too complex (12)
+tools/search_flights.py:148:1: C901 'search_flights' is too complex (13)
+tools/search_hotels.py:248:1: C901 'search_hotels' is too complex (16)

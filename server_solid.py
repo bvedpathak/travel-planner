@@ -15,18 +15,22 @@ import json
 import logging
 from typing import Any, Dict, List
 
-import mcp.types as types
 import mcp.server.stdio
-from mcp.server.models import InitializationOptions
+import mcp.types as types
 from mcp.server import Server
+from mcp.server.models import InitializationOptions
 from pydantic import AnyUrl
 
 # Import SOLID-compliant modules
-from core.interfaces import IToolRegistry, ITravelTool
+from core.interfaces import IToolRegistry
 from core.registry import ToolRegistryBuilder
 from core.services import (
-    YamlConfigurationLoader, NominatimGeocoder, HttpApiClient,
-    HotelResponseFormatter, HotelParameterMapper, DateValidator
+    DateValidator,
+    HotelParameterMapper,
+    HotelResponseFormatter,
+    HttpApiClient,
+    NominatimGeocoder,
+    YamlConfigurationLoader,
 )
 from services.hotel_service import HotelSearchService
 from tools_solid.hotel_tool import HotelToolFactory
@@ -61,6 +65,7 @@ class TravelPlannerServer:
 
     def _setup_handlers(self) -> None:
         """Set up MCP server handlers."""
+
         @self.server.list_tools()
         async def handle_list_tools() -> List[types.Tool]:
             """
@@ -99,29 +104,20 @@ class TravelPlannerServer:
                     response_data = {
                         **result.data,
                         "searchTimestamp": result.timestamp,
-                        "source": result.source
+                        "source": result.source,
                     }
                 else:
-                    response_data = {
-                        "error": result.error,
-                        "timestamp": result.timestamp
-                    }
+                    response_data = {"error": result.error, "timestamp": result.timestamp}
 
-                return [types.TextContent(
-                    type="text",
-                    text=json.dumps(response_data, indent=2)
-                )]
+                return [types.TextContent(type="text", text=json.dumps(response_data, indent=2))]
 
             except Exception as e:
                 self.logger.error(f"Error executing tool {name}: {str(e)}")
                 error_response = {
                     "error": f"Tool execution failed: {str(e)}",
-                    "timestamp": result.timestamp if 'result' in locals() else None
+                    "timestamp": result.timestamp if "result" in locals() else None,
                 }
-                return [types.TextContent(
-                    type="text",
-                    text=json.dumps(error_response, indent=2)
-                )]
+                return [types.TextContent(type="text", text=json.dumps(error_response, indent=2))]
 
         @self.server.list_resources()
         async def handle_list_resources() -> List[types.Resource]:
@@ -146,8 +142,7 @@ class TravelPlannerServer:
                     server_name="travel-planner-solid",
                     server_version="2.0.0",
                     capabilities=self.server.get_capabilities(
-                        notification_options=None,
-                        experimental_capabilities={}
+                        notification_options=None, experimental_capabilities={}
                     ),
                 ),
             )
@@ -177,7 +172,7 @@ class DependencyContainer:
             geocoder=geocoder,
             api_client=api_client,
             formatter=formatter,
-            validator=validator
+            validator=validator,
         )
 
     @staticmethod
@@ -191,9 +186,7 @@ class DependencyContainer:
         hotel_tool = HotelToolFactory.create_hotel_tool(hotel_service, parameter_mapper)
 
         # Build registry (Open-Closed Principle: easy to add new tools)
-        registry = (ToolRegistryBuilder()
-                   .add_tool(hotel_tool)
-                   .build())
+        registry = ToolRegistryBuilder().add_tool(hotel_tool).build()
 
         return registry
 

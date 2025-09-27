@@ -7,10 +7,17 @@ This tool implementation follows:
 - Dependency Inversion: Depends on abstractions, not concretions
 """
 
-import json
-from typing import Dict, Any
+from typing import Any, Dict
+
 import mcp.types as types
-from core.interfaces import ITravelTool, ISearchService, IParameterMapper, SearchResult, HotelSearchCriteria
+
+from core.interfaces import (
+    HotelSearchCriteria,
+    IParameterMapper,
+    ISearchService,
+    ITravelTool,
+    SearchResult,
+)
 
 
 class HotelSearchTool(ITravelTool):
@@ -50,65 +57,65 @@ class HotelSearchTool(ITravelTool):
                 "properties": {
                     "location": {
                         "type": "string",
-                        "description": "City or location name (e.g., 'Austin', 'San Francisco', 'New York')"
+                        "description": "City or location name (e.g., 'Austin', 'San Francisco', 'New York')",
                     },
                     "arrival_date": {
                         "type": "string",
-                        "description": "Check-in date in YYYY-MM-DD format"
+                        "description": "Check-in date in YYYY-MM-DD format",
                     },
                     "departure_date": {
                         "type": "string",
-                        "description": "Check-out date in YYYY-MM-DD format"
+                        "description": "Check-out date in YYYY-MM-DD format",
                     },
                     "adults": {
                         "type": "integer",
                         "description": "Number of adult guests (default: 1)",
-                        "default": 1
+                        "default": 1,
                     },
                     "children_age": {
                         "type": "string",
                         "description": "Ages of children separated by comma (e.g., '0,17')",
-                        "default": ""
+                        "default": "",
                     },
                     "room_qty": {
                         "type": "integer",
                         "description": "Number of rooms required (default: 1)",
-                        "default": 1
+                        "default": 1,
                     },
                     "currency_code": {
                         "type": "string",
                         "description": "Currency code (default: 'USD')",
-                        "default": "USD"
+                        "default": "USD",
                     },
                     "languagecode": {
                         "type": "string",
                         "description": "Language code (default: 'en-us')",
-                        "default": "en-us"
+                        "default": "en-us",
                     },
                     # Backward compatibility fields
                     "city": {
                         "type": "string",
-                        "description": "City name (legacy parameter, use 'location' instead)"
+                        "description": "City name (legacy parameter, use 'location' instead)",
                     },
                     "checkIn": {
                         "type": "string",
-                        "description": "Check-in date (legacy parameter, use 'arrival_date' instead)"
+                        "description": "Check-in date (legacy parameter, use 'arrival_date' instead)",
                     },
                     "nights": {
                         "type": "integer",
-                        "description": "Number of nights (legacy parameter, use 'departure_date' instead)"
+                        "description": "Number of nights (legacy parameter, use 'departure_date' instead)",
                     },
                     "guests": {
                         "type": "integer",
-                        "description": "Number of guests (legacy parameter, use 'adults' instead)"
-                    }
+                        "description": "Number of guests (legacy parameter, use 'adults' instead)",
+                    },
                 },
                 "required": ["location", "arrival_date", "departure_date"],
                 "anyOf": [
                     {"required": ["location", "arrival_date", "departure_date"]},
-                    {"required": ["city", "checkIn", "nights"]}
-                ]
-            }
+                    {"required": ["city", "checkIn", "nights"]},
+                ],
+            },
         )
 
     async def execute(self, arguments: Dict[str, Any]) -> SearchResult:
@@ -128,16 +135,14 @@ class HotelSearchTool(ITravelTool):
             # Step 2: Validate required parameters
             if not mapped_params.get("location"):
                 return SearchResult(
-                    success=False,
-                    data={},
-                    error="Missing required parameter: location"
+                    success=False, data={}, error="Missing required parameter: location"
                 )
 
             if not mapped_params.get("arrival_date") or not mapped_params.get("departure_date"):
                 return SearchResult(
                     success=False,
                     data={},
-                    error="Missing required parameters: arrival_date and departure_date"
+                    error="Missing required parameters: arrival_date and departure_date",
                 )
 
             # Step 3: Create search criteria
@@ -149,7 +154,7 @@ class HotelSearchTool(ITravelTool):
                 children_age=mapped_params.get("children_age", ""),
                 room_qty=mapped_params.get("room_qty", 1),
                 currency_code=mapped_params.get("currency_code", "USD"),
-                languagecode=mapped_params.get("languagecode", "en-us")
+                languagecode=mapped_params.get("languagecode", "en-us"),
             )
 
             # Step 4: Delegate to search service
@@ -158,11 +163,7 @@ class HotelSearchTool(ITravelTool):
             return result
 
         except Exception as e:
-            return SearchResult(
-                success=False,
-                data={},
-                error=f"Tool execution error: {str(e)}"
-            )
+            return SearchResult(success=False, data={}, error=f"Tool execution error: {str(e)}")
 
 
 class HotelToolFactory:
@@ -175,8 +176,7 @@ class HotelToolFactory:
 
     @staticmethod
     def create_hotel_tool(
-        search_service: ISearchService,
-        parameter_mapper: IParameterMapper
+        search_service: ISearchService, parameter_mapper: IParameterMapper
     ) -> ITravelTool:
         """Create a hotel search tool with injected dependencies."""
         return HotelSearchTool(search_service, parameter_mapper)

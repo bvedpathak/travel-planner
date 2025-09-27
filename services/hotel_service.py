@@ -6,10 +6,17 @@ rather than concrete implementations, following Dependency Inversion Principle.
 """
 
 from datetime import datetime
-from typing import Dict, Any, List
+from typing import Any, Dict, List
+
 from core.interfaces import (
-    ISearchService, IConfigurationLoader, IGeocoder, IApiClient,
-    IDataFormatter, IValidator, SearchResult, HotelSearchCriteria
+    HotelSearchCriteria,
+    IApiClient,
+    IConfigurationLoader,
+    IDataFormatter,
+    IGeocoder,
+    ISearchService,
+    IValidator,
+    SearchResult,
 )
 
 
@@ -27,7 +34,7 @@ class HotelSearchService(ISearchService):
         geocoder: IGeocoder,
         api_client: IApiClient,
         formatter: IDataFormatter,
-        validator: IValidator
+        validator: IValidator,
     ):
         """Initialize service with dependencies (Dependency Inversion Principle)."""
         self.config_loader = config_loader
@@ -55,7 +62,7 @@ class HotelSearchService(ISearchService):
                     success=False,
                     data={},
                     error=validation_error,
-                    timestamp=datetime.now().isoformat()
+                    timestamp=datetime.now().isoformat(),
                 )
 
             # Step 2: Get coordinates for location
@@ -66,19 +73,19 @@ class HotelSearchService(ISearchService):
                     success=False,
                     data={},
                     error=f"Failed to get coordinates for location '{criteria.location}': {str(e)}",
-                    timestamp=datetime.now().isoformat()
+                    timestamp=datetime.now().isoformat(),
                 )
 
             # Step 3: Load API configuration
             try:
                 config = self.config_loader.load_config()
-                api_config = config['hotel_api']['rapidapi']
+                api_config = config["hotel_api"]["rapidapi"]
             except Exception as e:
                 return SearchResult(
                     success=False,
                     data={},
                     error=f"Failed to load API configuration: {str(e)}",
-                    timestamp=datetime.now().isoformat()
+                    timestamp=datetime.now().isoformat(),
                 )
 
             # Step 4: Prepare API request
@@ -94,16 +101,13 @@ class HotelSearchService(ISearchService):
                 "temperature_unit": "c",
                 "languagecode": criteria.languagecode,
                 "currency_code": criteria.currency_code,
-                "location": "US"
+                "location": "US",
             }
 
             if criteria.children_age:
                 params["children_age"] = criteria.children_age
 
-            headers = {
-                "X-RapidAPI-Host": api_config['host'],
-                "X-RapidAPI-Key": api_config['key']
-            }
+            headers = {"X-RapidAPI-Host": api_config["host"], "X-RapidAPI-Key": api_config["key"]}
 
             # Step 5: Make API request
             url = f"{api_config['base_url']}/searchHotelsByCoordinates"
@@ -116,7 +120,7 @@ class HotelSearchService(ISearchService):
                     success=False,
                     data={},
                     error=f"API Error: {error_message}",
-                    timestamp=datetime.now().isoformat()
+                    timestamp=datetime.now().isoformat(),
                 )
 
             # Step 7: Extract and format hotel data
@@ -127,13 +131,15 @@ class HotelSearchService(ISearchService):
                 return SearchResult(
                     success=True,
                     data={
-                        "searchCriteria": self._build_search_criteria_response(criteria, latitude, longitude),
+                        "searchCriteria": self._build_search_criteria_response(
+                            criteria, latitude, longitude
+                        ),
                         "resultsFound": 0,
                         "hotels": [],
-                        "message": "No hotels found for the specified criteria"
+                        "message": "No hotels found for the specified criteria",
                     },
                     timestamp=datetime.now().isoformat(),
-                    source="Booking.com RapidAPI"
+                    source="Booking.com RapidAPI",
                 )
 
             # Step 8: Format hotel results
@@ -149,14 +155,16 @@ class HotelSearchService(ISearchService):
             return SearchResult(
                 success=True,
                 data={
-                    "searchCriteria": self._build_search_criteria_response(criteria, latitude, longitude, nights),
+                    "searchCriteria": self._build_search_criteria_response(
+                        criteria, latitude, longitude, nights
+                    ),
                     "resultsFound": len(hotels_list),
                     "resultsDisplayed": len(formatted_hotels),
                     "summary": self._build_summary(formatted_hotels, criteria.currency_code),
-                    "hotels": formatted_hotels
+                    "hotels": formatted_hotels,
                 },
                 timestamp=datetime.now().isoformat(),
-                source="Booking.com RapidAPI"
+                source="Booking.com RapidAPI",
             )
 
         except Exception as e:
@@ -164,15 +172,11 @@ class HotelSearchService(ISearchService):
                 success=False,
                 data={},
                 error=f"Hotel search failed: {str(e)}",
-                timestamp=datetime.now().isoformat()
+                timestamp=datetime.now().isoformat(),
             )
 
     def _build_search_criteria_response(
-        self,
-        criteria: HotelSearchCriteria,
-        latitude: float,
-        longitude: float,
-        nights: int = None
+        self, criteria: HotelSearchCriteria, latitude: float, longitude: float, nights: int = None
     ) -> Dict[str, Any]:
         """Build search criteria response."""
         response = {
@@ -182,7 +186,7 @@ class HotelSearchService(ISearchService):
             "departure_date": criteria.departure_date,
             "adults": criteria.adults,
             "room_qty": criteria.room_qty,
-            "currency_code": criteria.currency_code
+            "currency_code": criteria.currency_code,
         }
 
         if nights is not None:
@@ -208,11 +212,13 @@ class HotelSearchService(ISearchService):
                 "averagePricePerNight": 0,
                 "priceRangePerNight": "N/A",
                 "averageRating": 0,
-                "hotelClasses": []
+                "hotelClasses": [],
             }
 
         # Calculate price statistics
-        prices = [h["pricing"]["pricePerNight"] for h in hotels if h["pricing"]["pricePerNight"] > 0]
+        prices = [
+            h["pricing"]["pricePerNight"] for h in hotels if h["pricing"]["pricePerNight"] > 0
+        ]
         ratings = [h["rating"] for h in hotels if h["rating"] > 0]
         classes = list(set(h["hotelClass"] for h in hotels if h["hotelClass"] > 0))
 
@@ -220,7 +226,9 @@ class HotelSearchService(ISearchService):
             "totalHotels": len(hotels),
             "hotelsDisplayed": len(hotels),
             "averagePricePerNight": round(sum(prices) / len(prices), 2) if prices else 0,
-            "priceRangePerNight": f"{min(prices):.2f} - {max(prices):.2f} {currency_code}" if prices else "N/A",
+            "priceRangePerNight": (
+                f"{min(prices):.2f} - {max(prices):.2f} {currency_code}" if prices else "N/A"
+            ),
             "averageRating": round(sum(ratings) / len(ratings), 1) if ratings else 0,
-            "hotelClasses": sorted(classes)
+            "hotelClasses": sorted(classes),
         }

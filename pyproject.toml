@@ -34,13 +34,28 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest",
-    "pytest-asyncio",
-    "pytest-cov",
-    "mypy",
-    "black",
-    "isort",
-    "flake8",
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.20.0",
+    "pytest-cov>=4.0.0",
+    "mypy>=1.0.0",
+    "black>=22.0.0",
+    "isort>=5.10.0",
+    "flake8>=5.0.0",
+    "pylint>=2.15.0",
+    "bandit[toml]>=1.7.0",
+    "safety>=2.0.0",
+    "pre-commit>=2.20.0",
+    "vulture>=2.6.0",
+    "radon>=5.1.0",
+    "xenon>=0.9.0",
+    "flake8-docstrings>=1.6.0",
+    "flake8-import-order>=0.18.0",
+    "flake8-bugbear>=22.0.0",
+    "flake8-comprehensions>=3.10.0",
+    "flake8-simplify>=0.19.0",
+    "pep8-naming>=0.13.0",
+    "darglint>=1.8.0",
+    "interrogate>=1.5.0",
 ]
 enhanced = [
     "requests",
@@ -72,13 +87,6 @@ include = '\.pyi?$'
 profile = "black"
 line_length = 100
 
-[tool.mypy]
-python_version = "3.13"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-ignore_missing_imports = true
-
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
@@ -88,8 +96,8 @@ addopts = "-v --tb=short"
 asyncio_mode = "auto"
 
 [tool.coverage.run]
-source = ["tools", "server"]
-omit = ["tests/*", "*/tests/*"]
+source = ["core", "services", "tools", "tools_solid", "server"]
+omit = ["tests/*", "*/tests/*", ".venv/*"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -98,3 +106,79 @@ exclude_lines = [
     "raise AssertionError",
     "raise NotImplementedError",
 ]
+
+# Pylint Configuration
+[tool.pylint.messages_control]
+disable = [
+    "missing-module-docstring",
+    "too-few-public-methods",
+    "too-many-arguments",
+    "too-many-instance-attributes",
+    "too-many-locals",
+    "duplicate-code",
+]
+
+[tool.pylint.format]
+max-line-length = 100
+
+[tool.pylint.design]
+max-args = 8
+max-locals = 20
+max-returns = 6
+max-branches = 15
+max-statements = 60
+
+# Bandit Security Configuration
+[tool.bandit]
+exclude_dirs = ["tests", ".venv", "build"]
+skips = ["B101", "B601"]  # Skip assert_used and shell injection (paramiko)
+
+[tool.bandit.assert_used]
+skips = ["**/test_*.py", "**/tests/*.py"]
+
+# Flake8 Configuration (in setup.cfg since flake8 doesn't support pyproject.toml)
+# See setup.cfg for flake8 configuration
+
+# Vulture Configuration (Dead Code Detection)
+[tool.vulture]
+exclude = [".venv/", "build/", "dist/"]
+ignore_decorators = ["@app.route", "@pytest.fixture", "@server.list_tools", "@server.call_tool"]
+ignore_names = ["_*", "setUp", "tearDown"]
+min_confidence = 60
+
+# Interrogate Configuration (Docstring Coverage)
+[tool.interrogate]
+ignore-init-method = true
+ignore-init-module = true
+ignore-magic = true
+ignore-semiprivate = true
+ignore-private = true
+ignore-property-decorators = true
+ignore-module = true
+ignore-nested-functions = true
+fail-under = 80
+exclude = ["setup.py", "docs", "build", ".venv"]
+verbose = 2
+
+# MyPy Configuration
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+show_error_codes = true
+strict_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+check_untyped_defs = true
+no_implicit_reexport = true
+
+[[tool.mypy.overrides]]
+module = [
+    "yaml.*",
+    "aiohttp.*",
+    "mcp.*",
+    "pydantic.*",
+]
+ignore_missing_imports = true

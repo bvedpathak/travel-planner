@@ -6,6 +6,7 @@ without modifying existing code, demonstrating the Open-Closed Principle.
 """
 
 from typing import Dict, List, Optional
+
 from core.interfaces import IToolRegistry, ITravelTool
 
 
@@ -112,7 +113,7 @@ class ToolRegistryBuilder:
         """Initialize empty registry builder."""
         self.registry = TravelToolRegistry()
 
-    def add_tool(self, tool: ITravelTool) -> 'ToolRegistryBuilder':
+    def add_tool(self, tool: ITravelTool) -> "ToolRegistryBuilder":
         """
         Add a tool to the registry.
 

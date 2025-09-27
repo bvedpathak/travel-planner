@@ -6,20 +6,23 @@ enabling dependency inversion and loose coupling.
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass
+from typing import Any, Dict, List, Optional, Tuple
+
 import mcp.types as types
 
 
 @dataclass
 class SearchCriteria:
     """Base class for search criteria."""
+
     pass
 
 
 @dataclass
 class SearchResult:
     """Base class for search results."""
+
     success: bool
     data: Dict[str, Any]
     error: Optional[str] = None
@@ -50,7 +53,9 @@ class IApiClient(ABC):
     """Interface for API clients."""
 
     @abstractmethod
-    async def make_request(self, url: str, params: Dict[str, Any], headers: Dict[str, Any]) -> Dict[str, Any]:
+    async def make_request(
+        self, url: str, params: Dict[str, Any], headers: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Make an HTTP request to an API."""
         pass
 
@@ -133,6 +138,7 @@ class IValidator(ABC):
 @dataclass
 class HotelSearchCriteria(SearchCriteria):
     """Hotel search criteria."""
+
     location: str
     arrival_date: str
     departure_date: str
@@ -146,6 +152,7 @@ class HotelSearchCriteria(SearchCriteria):
 @dataclass
 class FlightSearchCriteria(SearchCriteria):
     """Flight search criteria."""
+
     from_id: str
     to_id: str
     depart_date: str

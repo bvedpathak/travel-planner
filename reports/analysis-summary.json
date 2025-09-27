@@ -1,0 +1,64 @@
+{
+  "timestamp": "2025-09-27T08:25:58.103800",
+  "source_directories": [
+    "core",
+    "services",
+    "tools",
+    "tools_solid",
+    "server.py",
+    "server_solid.py"
+  ],
+  "total_tools": 6,
+  "successful_tools": 2,
+  "failed_tools": 4,
+  "results": {
+    "Black Format Check": {
+      "name": "Black Format Check",
+      "success": true,
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "All done! \u2728 \ud83c\udf70 \u2728\n16 files would be left unchanged.\n",
+      "output_file": null
+    },
+    "isort Import Check": {
+      "name": "isort Import Check",
+      "success": true,
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "output_file": null
+    },
+    "Flake8 Linting": {
+      "name": "Flake8 Linting",
+      "success": false,
+      "returncode": 1,
+      "stdout": "Output saved to flake8-report.txt",
+      "stderr": "",
+      "output_file": "flake8-report.txt"
+    },
+    "Pylint Analysis": {
+      "name": "Pylint Analysis",
+      "success": false,
+      "returncode": 28,
+      "stdout": "Output saved to pylint-report.txt",
+      "stderr": "",
+      "output_file": "pylint-report.txt"
+    },
+    "MyPy Type Check": {
+      "name": "MyPy Type Check",
+      "success": false,
+      "returncode": 1,
+      "stdout": "Output saved to mypy-report.txt",
+      "stderr": "",
+      "output_file": "mypy-report.txt"
+    },
+    "Bandit Security": {
+      "name": "Bandit Security",
+      "success": false,
+      "returncode": 1,
+      "stdout": "",
+      "stderr": "[main]\tINFO\tprofile include tests: None\n[main]\tINFO\tprofile exclude tests: None\n[main]\tINFO\tcli include tests: None\n[main]\tINFO\tcli exclude tests: None\n[json]\tINFO\tJSON output written to file: reports/bandit-report.json\n",
+      "output_file": null
+    }
+  }
+}

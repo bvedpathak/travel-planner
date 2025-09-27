@@ -6,9 +6,8 @@ In a production environment, this would integrate with APIs like Amtrak, VIA Rai
 """
 
 import random
-import json
 from datetime import datetime, timedelta
-from typing import List, Dict, Any
+from typing import Any, Dict
 
 # Mock train routes and operators
 TRAIN_ROUTES = {
@@ -16,50 +15,50 @@ TRAIN_ROUTES = {
         "operator": "Amtrak Northeast Regional",
         "distance": "230 miles",
         "base_duration": 240,  # 4 hours in minutes
-        "base_price": 120
+        "base_price": 120,
     },
     ("NYC", "Philadelphia"): {
         "operator": "Amtrak Northeast Regional",
         "distance": "95 miles",
         "base_duration": 90,  # 1.5 hours
-        "base_price": 65
+        "base_price": 65,
     },
     ("NYC", "Washington DC"): {
         "operator": "Amtrak Northeast Regional",
         "distance": "225 miles",
         "base_duration": 180,  # 3 hours
-        "base_price": 110
+        "base_price": 110,
     },
     ("Chicago", "Milwaukee"): {
         "operator": "Amtrak Hiawatha",
         "distance": "85 miles",
         "base_duration": 90,  # 1.5 hours
-        "base_price": 45
+        "base_price": 45,
     },
     ("San Francisco", "Los Angeles"): {
         "operator": "Amtrak Coast Starlight",
         "distance": "470 miles",
         "base_duration": 720,  # 12 hours
-        "base_price": 180
+        "base_price": 180,
     },
     ("Seattle", "Portland"): {
         "operator": "Amtrak Cascades",
         "distance": "173 miles",
         "base_duration": 210,  # 3.5 hours
-        "base_price": 85
+        "base_price": 85,
     },
     ("Austin", "Dallas"): {
         "operator": "Texas Central Railway",
         "distance": "200 miles",
         "base_duration": 180,  # 3 hours
-        "base_price": 95
+        "base_price": 95,
     },
     ("Miami", "Orlando"): {
         "operator": "Brightline",
         "distance": "235 miles",
         "base_duration": 210,  # 3.5 hours
-        "base_price": 120
-    }
+        "base_price": 120,
+    },
 }
 
 # City aliases for flexibility
@@ -69,28 +68,44 @@ CITY_ALIASES = {
     "San Francisco": "SF",
     "Los Angeles": "LA",
     "Washington": "Washington DC",
-    "DC": "Washington DC"
+    "DC": "Washington DC",
 }
 
 TRAIN_CLASSES = [
     {
         "name": "Coach",
         "multiplier": 1.0,
-        "amenities": ["Comfortable seating", "WiFi", "Power outlets", "Overhead storage"]
+        "amenities": ["Comfortable seating", "WiFi", "Power outlets", "Overhead storage"],
     },
     {
         "name": "Business Class",
         "multiplier": 1.6,
-        "amenities": ["Extra legroom", "WiFi", "Power outlets", "Complimentary drinks", "Priority boarding"]
+        "amenities": [
+            "Extra legroom",
+            "WiFi",
+            "Power outlets",
+            "Complimentary drinks",
+            "Priority boarding",
+        ],
     },
     {
         "name": "First Class",
         "multiplier": 2.4,
-        "amenities": ["Premium seating", "WiFi", "Power outlets", "Meal service", "Priority boarding", "Lounge access"]
-    }
+        "amenities": [
+            "Premium seating",
+            "WiFi",
+            "Power outlets",
+            "Meal service",
+            "Priority boarding",
+            "Lounge access",
+        ],
+    },
 ]
 
-async def search_trains(from_city: str, to_city: str, date: str, passengers: int = 1) -> Dict[str, Any]:
+
+async def search_trains(
+    from_city: str, to_city: str, date: str, passengers: int = 1
+) -> Dict[str, Any]:
     """
     Search for train routes between two cities.
 
@@ -115,20 +130,18 @@ async def search_trains(from_city: str, to_city: str, date: str, passengers: int
     route_info = None
     if route_key in TRAIN_ROUTES:
         route_info = TRAIN_ROUTES[route_key]
-        is_reverse = False
     elif reverse_route_key in TRAIN_ROUTES:
         route_info = TRAIN_ROUTES[reverse_route_key]
-        is_reverse = True
     else:
         # No direct route available
         available_routes = []
-        for (origin, dest) in TRAIN_ROUTES.keys():
+        for origin, dest in TRAIN_ROUTES.keys():
             available_routes.append(f"{origin} → {dest}")
 
         return {
             "error": f"No train routes available between {from_city} and {to_city}",
             "available_routes": available_routes,
-            "suggestion": "Consider connecting through a major hub city or alternative transportation"
+            "suggestion": "Consider connecting through a major hub city or alternative transportation",
         }
 
     # Validate date format
@@ -178,13 +191,17 @@ async def search_trains(from_city: str, to_city: str, date: str, passengers: int
             if 7 <= departure_hour <= 9 or 17 <= departure_hour <= 19:
                 total_price = int(total_price * 1.15)
 
-            classes.append({
-                "className": train_class["name"],
-                "pricePerPerson": class_price,
-                "totalPrice": total_price,
-                "amenities": train_class["amenities"],
-                "availability": random.choice(["Available", "Available", "Available", "Limited", "Sold Out"])
-            })
+            classes.append(
+                {
+                    "className": train_class["name"],
+                    "pricePerPerson": class_price,
+                    "totalPrice": total_price,
+                    "amenities": train_class["amenities"],
+                    "availability": random.choice(
+                        ["Available", "Available", "Available", "Limited", "Sold Out"]
+                    ),
+                }
+            )
 
         train = {
             "trainNumber": train_number,
@@ -193,28 +210,32 @@ async def search_trains(from_city: str, to_city: str, date: str, passengers: int
                 "city": from_city,
                 "time": departure_time,
                 "date": date,
-                "station": f"{from_city} Union Station"
+                "station": f"{from_city} Union Station",
             },
             "arrival": {
                 "city": to_city,
                 "time": arrival_time,
                 "date": arrival_date,
-                "station": f"{to_city} Union Station"
+                "station": f"{to_city} Union Station",
             },
             "duration": duration_str,
             "distance": route_info["distance"],
             "passengers": passengers,
             "classes": classes,
             "amenities": [
-                "Restrooms", "Snack Car", "WiFi", "Power Outlets",
-                "Climate Control", "Large Windows"
+                "Restrooms",
+                "Snack Car",
+                "WiFi",
+                "Power Outlets",
+                "Climate Control",
+                "Large Windows",
             ],
             "policies": {
                 "baggage": "2 personal items + 2 carry-on bags free",
                 "cancellation": "Full refund up to 24 hours before departure",
                 "boarding": "30 minutes before departure",
-                "pets": "Small pets allowed in carriers"
-            }
+                "pets": "Small pets allowed in carriers",
+            },
         }
 
         trains.append(train)
@@ -227,15 +248,15 @@ async def search_trains(from_city: str, to_city: str, date: str, passengers: int
             "from": from_city,
             "to": to_city,
             "date": date,
-            "passengers": passengers
+            "passengers": passengers,
         },
         "route": {
             "operator": route_info["operator"],
             "distance": route_info["distance"],
-            "averageDuration": f"{route_info['base_duration'] // 60}h {route_info['base_duration'] % 60}m"
+            "averageDuration": f"{route_info['base_duration'] // 60}h {route_info['base_duration'] % 60}m",
         },
         "resultsFound": len(trains),
         "trains": trains,
         "searchTimestamp": datetime.now().isoformat(),
-        "note": "This is mock data. In production, this would integrate with real train booking APIs like Amtrak."
+        "note": "This is mock data. In production, this would integrate with real train booking APIs like Amtrak.",
     }

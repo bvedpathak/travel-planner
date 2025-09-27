@@ -4,11 +4,13 @@ Flight search tool for the Travel Planner MCP Server.
 Integrates with Booking.com RapidAPI for live flight data.
 """
 
-import aiohttp
-import yaml
 import os
 from datetime import datetime
-from typing import Dict, Any
+from typing import Any, Dict
+
+import aiohttp
+import yaml
+
 
 def load_config() -> dict:
     """
@@ -21,9 +23,10 @@ def load_config() -> dict:
         FileNotFoundError: If config.yaml is not found.
         yaml.YAMLError: If config.yaml is malformed.
     """
-    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'config.yaml')
-    with open(config_path, 'r') as file:
+    config_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "config.yaml")
+    with open(config_path, "r") as file:
         return yaml.safe_load(file)
+
 
 def format_price(price_obj: dict) -> str:
     """
@@ -49,6 +52,7 @@ def format_price(price_obj: dict) -> str:
     total = units + (nanos / 1_000_000_000)
     return f"{currency} {total:.2f}"
 
+
 def format_duration(total_seconds: int) -> str:
     """
     Convert seconds to a human-readable hours and minutes format.
@@ -65,6 +69,7 @@ def format_duration(total_seconds: int) -> str:
     hours = total_seconds // 3600
     minutes = (total_seconds % 3600) // 60
     return f"{hours}h {minutes}m"
+
 
 def parse_flight_offer(offer: dict) -> dict | None:
     """
@@ -104,20 +109,20 @@ def parse_flight_offer(offer: dict) -> dict | None:
                     "airportName": leg["departureAirport"]["name"],
                     "city": leg["departureAirport"]["cityName"],
                     "time": leg["departureTime"].split("T")[1][:5],  # Extract time from ISO format
-                    "date": leg["departureTime"].split("T")[0]  # Extract date
+                    "date": leg["departureTime"].split("T")[0],  # Extract date
                 },
                 "arrival": {
                     "airport": leg["arrivalAirport"]["code"],
                     "airportName": leg["arrivalAirport"]["name"],
                     "city": leg["arrivalAirport"]["cityName"],
                     "time": leg["arrivalTime"].split("T")[1][:5],
-                    "date": leg["arrivalTime"].split("T")[0]
+                    "date": leg["arrivalTime"].split("T")[0],
                 },
                 "duration": format_duration(leg.get("totalTime")),
                 "flightNumber": f"{leg['flightInfo']['carrierInfo']['marketingCarrier']}{leg['flightInfo']['flightNumber']}",
                 "airline": leg["carriersData"][0]["name"] if leg.get("carriersData") else "Unknown",
                 "stops": len(leg.get("flightStops", [])),
-                "cabinClass": leg.get("cabinClass", "ECONOMY")
+                "cabinClass": leg.get("cabinClass", "ECONOMY"),
             }
             parsed_segments.append(segment_data)
 
@@ -127,17 +132,18 @@ def parse_flight_offer(offer: dict) -> dict | None:
             "priceBreakdown": {
                 "baseFare": format_price(price_breakdown.get("baseFare")),
                 "taxes": format_price(price_breakdown.get("tax")),
-                "total": format_price(total_price)
+                "total": format_price(total_price),
             },
             "tripType": offer.get("tripType", "UNKNOWN"),
             "bookingToken": offer.get("token"),
-            "isRoundTrip": len(segments) > 1
+            "isRoundTrip": len(segments) > 1,
         }
 
     except Exception as e:
         # Log error but don't fail the entire request
         print(f"Error parsing flight offer: {e}")
         return None
+
 
 async def search_flights(
     from_id: str,
@@ -148,7 +154,7 @@ async def search_flights(
     children: int = 0,
     stops: str = "none",
     cabin_class: str = "ECONOMY",
-    currency_code: str = "USD"
+    currency_code: str = "USD",
 ) -> Dict[str, Any]:
     """
     Search for flights between two cities using Booking.com RapidAPI.
@@ -179,7 +185,7 @@ async def search_flights(
     # Load API configuration
     try:
         config = load_config()
-        api_config = config['flight_api']['rapidapi']
+        api_config = config["flight_api"]["rapidapi"]
     except Exception as e:
         return {"error": f"Failed to load API configuration: {str(e)}"}
 
@@ -194,16 +200,13 @@ async def search_flights(
         "sort": "BEST",
         "cabinClass": cabin_class,
         "currency_code": currency_code,
-        "stops": stops
+        "stops": stops,
     }
 
     if return_date:
         params["returnDate"] = return_date
 
-    headers = {
-        "X-RapidAPI-Host": api_config['host'],
-        "X-RapidAPI-Key": api_config['key']
-    }
+    headers = {"X-RapidAPI-Host": api_config["host"], "X-RapidAPI-Key": api_config["key"]}
 
     # Make API request
     try:
@@ -218,7 +221,7 @@ async def search_flights(
                         error_info = data.get("data", {}).get("error", {})
                         return {
                             "error": f"API Error: {error_info.get('code', 'Unknown error')}",
-                            "requestId": error_info.get('requestId'),
+                            "requestId": error_info.get("requestId"),
                             "searchCriteria": {
                                 "from": from_id,
                                 "to": to_id,
@@ -227,8 +230,8 @@ async def search_flights(
                                 "adults": adults,
                                 "children": children,
                                 "cabinClass": cabin_class,
-                                "stops": stops
-                            }
+                                "stops": stops,
+                            },
                         }
 
                     # Transform successful response to user-friendly format
@@ -251,7 +254,7 @@ async def search_flights(
                             "adults": adults,
                             "children": children,
                             "cabinClass": cabin_class,
-                            "stops": stops
+                            "stops": stops,
                         },
                         "resultsFound": len(flight_offers),
                         "resultsDisplayed": len(flights),
@@ -260,17 +263,24 @@ async def search_flights(
                             "minPrice": format_price(aggregation.get("minPrice")),
                             "priceRange": f"{format_price(aggregation.get('minPrice'))} - {format_price(aggregation.get('budget', {}).get('max'))}",
                             "airlines": len(aggregation.get("airlines", [])),
-                            "directFlights": next((stop["count"] for stop in aggregation.get("stops", []) if stop.get("numberOfStops") == 0), 0)
+                            "directFlights": next(
+                                (
+                                    stop["count"]
+                                    for stop in aggregation.get("stops", [])
+                                    if stop.get("numberOfStops") == 0
+                                ),
+                                0,
+                            ),
                         },
                         "flights": flights,
                         "searchTimestamp": datetime.now().isoformat(),
-                        "source": "Booking.com RapidAPI"
+                        "source": "Booking.com RapidAPI",
                     }
                 else:
                     error_text = await response.text()
                     return {
                         "error": f"API request failed with status {response.status}",
-                        "details": error_text
+                        "details": error_text,
                     }
     except Exception as e:
         return {
@@ -281,6 +291,6 @@ async def search_flights(
                 "departDate": depart_date,
                 "returnDate": return_date,
                 "adults": adults,
-                "children": children
-            }
+                "children": children,
+            },
         }
