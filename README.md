@@ -40,7 +40,7 @@ This Travel Planner server showcases the core MCP concepts:
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.10+
 - pip package manager
 
 ### Installation
@@ -56,12 +56,35 @@ This Travel Planner server showcases the core MCP concepts:
    pip install -r requirements.txt
    ```
 
-3. **Run the server**
+3. **Install development dependencies (optional)**
+   ```bash
+   pip install -e ".[dev]"
+   ```
+
+4. **Run the server**
    ```bash
    python server.py
    ```
 
 The server will start and listen for MCP client connections via stdio.
+
+### Development Setup
+
+For development with full code quality tools:
+
+```bash
+# Install with development dependencies
+pip install -e ".[dev]"
+
+# Set up pre-commit hooks (optional)
+pre-commit install
+
+# Run code quality checks
+make lint          # Run all linting tools
+make format        # Auto-format code
+make security      # Security analysis
+make test          # Run tests
+```
 
 ### Using with Claude Desktop
 
@@ -419,26 +442,67 @@ The server will start and listen for MCP client connections via stdio.
 
 ## 🏗️ Architecture
 
+### SOLID Design Principles
+
+The project demonstrates **SOLID software architecture principles**:
+
+- **Single Responsibility Principle (SRP)**: Each class has one reason to change
+- **Open-Closed Principle (OCP)**: Can be extended without modification via tool registry
+- **Liskov Substitution Principle (LSP)**: Implementations can be substituted seamlessly
+- **Interface Segregation Principle (ISP)**: Clients depend only on interfaces they use
+- **Dependency Inversion Principle (DIP)**: Depends on abstractions, not concretions
+
+**Two Server Implementations**:
+- `server.py`: Original implementation for compatibility
+- `server_solid.py`: SOLID-compliant implementation with dependency injection
+
 ### Project Structure
 
 ```
 travel-planner/
 ├── server.py                 # Main MCP server implementation
-├── tools/                    # Tool implementations
+├── server_solid.py           # SOLID-compliant server architecture
+├── tools/                    # Original tool implementations
 │   ├── __init__.py
 │   ├── search_flights.py     # Flight search logic
-│   ├── search_hotels.py      # Hotel search logic
+│   ├── search_hotels.py      # Hotel search logic (live API)
 │   ├── search_cars.py        # Car rental logic
 │   ├── search_trains.py      # Train search logic
 │   └── generate_itinerary.py # Itinerary generation
+├── tools_solid/              # SOLID-compliant tool implementations
+│   ├── __init__.py
+│   └── hotel_tool.py         # Example SOLID hotel tool
+├── core/                     # Core abstractions and services
+│   ├── __init__.py
+│   ├── interfaces.py         # Abstract interfaces (ISP)
+│   ├── services.py           # Concrete service implementations
+│   └── registry.py           # Tool registry (OCP)
+├── services/                 # Business logic services
+│   ├── __init__.py
+│   └── hotel_service.py      # Hotel search service
 ├── resources/                # Static resources
 │   └── travel_guides/        # City travel guides
 │       ├── austin.json
 │       ├── san_francisco.json
 │       └── new_york.json
+├── scripts/                  # Development and analysis scripts
+│   └── run_analysis.py       # Comprehensive static analysis runner
+├── reports/                  # Generated analysis reports
+│   ├── analysis-summary.html # Interactive HTML dashboard
+│   ├── analysis-summary.json # JSON summary report
+│   └── *.txt                 # Individual tool reports
+├── .github/                  # GitHub Actions CI/CD
+│   └── workflows/
+│       └── ci.yml            # Comprehensive CI pipeline
+├── config.yaml               # API configuration
+├── pyproject.toml            # Python project configuration
+├── setup.cfg                 # Additional tool configuration
+├── Makefile                  # Development automation
+├── .pre-commit-config.yaml   # Pre-commit hooks
+├── sonar-project.properties  # SonarQube configuration
 ├── requirements.txt          # Python dependencies
-├── README.md                # This file
-└── examples/                # Usage examples
+├── README.md                 # This file
+└── examples/                 # Usage examples
     └── sample_interactions.py
 ```
 
@@ -493,7 +557,7 @@ This project uses mock data for demonstration, but it's designed for easy real A
 - **Google Flights API**: Comprehensive flight search
 
 ### Hotel APIs
-- **Booking.com API**: Global hotel inventory
+- **Booking.com RapidAPI**: Global hotel inventory (✅ **Integrated**)
 - **Expedia API**: Travel booking platform
 - **Hotels.com API**: Hotel search and booking
 
@@ -509,10 +573,29 @@ This project uses mock data for demonstration, but it's designed for easy real A
 
 ### Implementation Example
 
+**Hotel Search (Already Integrated)**:
+```python
+# Live Booking.com API integration with geocoding fallback
+async def search_hotels(location: str, arrival_date: str, departure_date: str, adults: int):
+    # Geocoding for location resolution
+    coordinates = await geocode_location(location)
+
+    # Live API call to Booking.com
+    response = await call_booking_api({
+        "latitude": coordinates["lat"],
+        "longitude": coordinates["lon"],
+        "arrival_date": arrival_date,
+        "departure_date": departure_date,
+        "adults": adults
+    })
+
+    return format_hotel_response(response)
+```
+
+**Flight API Example**:
 ```python
 # Example: Replace mock flight data with real API
 async def search_flights(from_city: str, to_city: str, date: str, passengers: int):
-    # Instead of generating mock data:
     amadeus_client = AmadeusClient(api_key=os.getenv('AMADEUS_API_KEY'))
 
     response = await amadeus_client.shopping.flight_offers_search.get(
@@ -522,23 +605,67 @@ async def search_flights(from_city: str, to_city: str, date: str, passengers: in
         adults=passengers
     )
 
-    # Transform API response to standard format
     return transform_amadeus_response(response.data)
 ```
 
-## 🧪 Testing
+## 🧪 Testing & Code Quality
 
-### Running Tests
+### Code Quality Pipeline
+
+This project includes comprehensive code quality tools and automation:
+
+#### Static Analysis Tools
+- **Black**: Code formatting with 100-character line length
+- **isort**: Import sorting compatible with Black
+- **flake8**: Linting with plugins (docstrings, import order, bug detection)
+- **pylint**: Comprehensive code analysis
+- **mypy**: Static type checking
+- **bandit**: Security vulnerability detection
+- **safety**: Dependency vulnerability scanning
+
+#### Running Quality Checks
+
+```bash
+# Run comprehensive analysis (generates reports)
+python scripts/run_analysis.py
+
+# Individual tools
+make lint          # All linting tools
+make format        # Auto-format with Black + isort
+make security      # Security analysis
+make complexity    # Code complexity analysis
+make dependencies  # Dependency analysis
+
+# View interactive report
+open reports/analysis-summary.html
+```
+
+#### Pre-commit Hooks
+
+Automatically run quality checks before each commit:
+
+```bash
+# Install pre-commit hooks
+pre-commit install
+
+# Run on all files
+pre-commit run --all-files
+```
+
+### Testing
 
 ```bash
 # Install test dependencies
-pip install pytest pytest-asyncio
+pip install pytest pytest-asyncio pytest-cov
 
 # Run tests
 pytest tests/
 
 # Run with coverage
-pytest --cov=tools tests/
+pytest --cov=tools --cov=core --cov=services tests/
+
+# Generate coverage report
+pytest --cov=tools --cov-report=html tests/
 ```
 
 ### Test Examples
@@ -555,6 +682,59 @@ async def test_flight_search():
     assert result["searchCriteria"]["to"] == "SFO"
     assert "flights" in result
     assert len(result["flights"]) > 0
+```
+
+### CI/CD Pipeline
+
+**GitHub Actions** automatically run on every push and pull request:
+
+- ✅ **Code Quality**: Black, isort, flake8, pylint, mypy, bandit
+- ✅ **Security Scanning**: Trivy vulnerability scanner
+- ✅ **Dependency Checks**: safety, pip-audit
+- ✅ **Multi-Python Testing**: 3.10, 3.11, 3.12
+- ✅ **Package Building**: Verify installability
+- ✅ **Quality Gates**: Comprehensive pass/fail assessment
+
+**Reports and Artifacts**:
+- HTML coverage reports
+- Security scan results
+- Quality analysis summaries
+- Build artifacts
+
+### Quality Dashboard
+
+The project generates comprehensive quality reports:
+
+```bash
+# Generate analysis dashboard
+python scripts/run_analysis.py
+
+# View interactive HTML report
+open reports/analysis-summary.html
+```
+
+**Report Features**:
+- 📊 **Interactive Dashboard**: Real-time quality metrics
+- 🔍 **Detailed Analysis**: Individual tool reports (flake8, pylint, mypy, bandit)
+- 📈 **Trend Tracking**: Track quality improvements over time
+- 🚨 **Issue Detection**: Security vulnerabilities and code smells
+- ✅ **Pass/Fail Status**: Clear quality gate results
+
+### Available Make Commands
+
+```bash
+make help         # Show all available commands
+make format       # Auto-format code (black + isort)
+make lint         # Run all linting tools
+make lint-fast    # Run fast linting (black + flake8)
+make typecheck    # Run mypy type checking
+make security     # Run security analysis (bandit + safety)
+make complexity   # Analyze code complexity
+make dead-code    # Find unused code
+make dependencies # Analyze dependencies
+make all-checks   # Run comprehensive analysis
+make clean        # Clean generated files
+make install-dev  # Install development dependencies
 ```
 
 ## 🚀 Extensions & Ideas
@@ -595,6 +775,9 @@ Contributions are welcome! Here's how to get started:
 - Create specialized tools (restaurant reservations, event tickets)
 - Improve error handling and validation
 - Add internationalization support
+- Integrate additional live APIs (flights, cars, trains)
+- Enhance code quality and security measures
+- Add more comprehensive testing
 
 ## 📄 License
 
