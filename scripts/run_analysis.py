@@ -118,6 +118,7 @@ class AnalysisRunner:
         print(f"📊 Reports will be saved to: {self.reports_dir}")
         print("-" * 60)
 
+        # Tools summary
         tools = [
             self.run_black_check,
             self.run_isort_check,
